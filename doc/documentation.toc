@@ -1,0 +1,20 @@
+\select@language {french}
+\contentsline {section}{\numberline {1}Introduction}{2}
+\contentsline {section}{\numberline {2}Le jeu Othello}{2}
+\contentsline {subsection}{\numberline {2.1}Principes du jeu}{2}
+\contentsline {section}{\numberline {3}L'intelligence artificielle}{4}
+\contentsline {subsection}{\numberline {3.1}M\IeC {\'e}thode al\IeC {\'e}atoire}{4}
+\contentsline {subsection}{\numberline {3.2}M\IeC {\'e}thode du minimax}{4}
+\contentsline {subsubsection}{\numberline {3.2.1}Algorithme du Minimax}{6}
+\contentsline {subsubsection}{\numberline {3.2.2}Probl\IeC {\`e}me d'espace et de temps de recherche}{8}
+\contentsline {subsubsection}{\numberline {3.2.3}Le Minimax \IeC {\`a} profondeur limit\IeC {\'e}e}{8}
+\contentsline {subsubsection}{\numberline {3.2.4}Le Minimax avec \IeC {\'e}lagage {{\em Alpha Beta\/}}}{10}
+\contentsline {section}{\numberline {4}Impl\IeC {\'e}mentation}{12}
+\contentsline {subsection}{\numberline {4.1}Compilation}{12}
+\contentsline {subsection}{\numberline {4.2}Utilisation}{13}
+\contentsline {subsection}{\numberline {4.3}Liste exhaustive des prototypes}{14}
+\contentsline {subsection}{\numberline {4.4}Algorithmes int\IeC {\'e}ressants}{14}
+\contentsline {subsubsection}{\numberline {4.4.1}Direction L\IeC {\'e}gale}{14}
+\contentsline {subsubsection}{\numberline {4.4.2}Coup L\IeC {\'e}gal}{15}
+\contentsline {subsubsection}{\numberline {4.4.3}Simulation de jeu}{16}
+\contentsline {section}{\numberline {5}Module {\tt {Othello}}}{16}

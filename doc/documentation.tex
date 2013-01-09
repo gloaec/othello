@@ -1,0 +1,1130 @@
+\documentclass[11pt]{article}
+
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{palatino}
+\usepackage{courier}
+\usepackage{alltt}
+\usepackage{longtable}
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{float} 
+\usepackage{url} 
+\usepackage{ocamldoc}
+\usepackage{amsmath,amssymb,graphicx,enumerate,calc,ifthen}
+
+
+\DeclareTextSymbol{\QT}{T1}{39}
+\DeclareTextSymbol{\COMMA}{T1}{44}
+\DeclareTextSymbol{\COLON}{T1}{58}
+\DeclareTextSymbol{\SC}{T1}{59}
+\DeclareTextSymbol{\BS}{T1}{92}
+\DeclareTextSymbol{\CI}{T1}{94}
+\DeclareTextSymbol{\TI}{T1}{126}
+\definecolor{navy}{rgb}{0.15, 0.15, 0.45} 
+\definecolor{myblue}{rgb}{0.25, 0.25, 0.645} 
+\definecolor{darkred}{rgb}{0.845, 0.125, 0.125} 
+\definecolor{grey}{rgb}{0.4, 0.4, 0.4} 
+\definecolor{darkgreen}{rgb}{0.125, 0.845, 0.125} 
+\definecolor{leaf}{rgb}{0.1, 0.9, 0.1} 
+
+\newcommand{\mlkeywordA}[1]{\mbox{\color{cyan}{\textbf{\texttt{#1}}}}}
+\newcommand{\mlkeywordB}[1]{\mbox{\color{navy}{\textbf{\texttt{#1}}}}}
+\newcommand{\mlkeyword}[1]{\mbox{\color{red}{#1}}}
+\newcommand{\mloperator}[1]{\mbox{\color{darkgreen}{#1}}}
+\newcommand{\mlmodulename}[1]{\mbox{\color{navy}{#1}}}
+\newcommand{\mlstring}[1]{\mbox{\color{navy}{#1}}}
+\newcommand{\mlcomments}[1]{\mbox{\color{grey}{#1}}}
+\newcommand{\mlcodeline}[2]{\tiny\sl #1 & \begin{minipage}[c]{0.8\linewidth}\begin{alltt}\mbox{#2}\end{alltt}\end{minipage}\\}
+% ---------------------------------------------------------------------
+
+\floatstyle{boxed} 
+\restylefloat{figure}
+
+%%%%%%%%%% Start TeXmacs macros
+\newcommand{\nocomma}{}
+\newcommand{\tmem}[1]{{\em #1\/}}
+\newcommand{\tmmathbf}[1]{\ensuremath{\boldsymbol{#1}}}
+\newcommand{\tmname}[1]{\textsc{#1}}
+\newcommand{\tmop}[1]{\ensuremath{\operatorname{#1}}}
+\newcommand{\tmsamp}[1]{\textsf{#1}}
+\newcommand{\tmstrong}[1]{\textbf{#1}}
+\newcommand{\tmtextbf}[1]{{\bfseries{#1}}}
+\newcommand{\tmtextit}[1]{{\itshape{#1}}}
+\newcommand{\tmtextmd}[1]{{\mdseries{#1}}}
+\newenvironment{enumeratealpha}{\begin{enumerate}[a{\textup{)}}] }{\end{enumerate}}
+\newenvironment{itemizedot}{\begin{itemize} \renewcommand{\labelitemi}{$\bullet$}\renewcommand{\labelitemii}{$\bullet$}\renewcommand{\labelitemiii}{$\bullet$}\renewcommand{\labelitemiv}{$\bullet$}}{\end{itemize}}
+\newenvironment{tmparsep}[1]{\begingroup\setlength{\parskip}{#1}}{\endgroup}
+\newcommand{\tmfloatcontents}{}
+\newlength{\tmfloatwidth}
+\newcommand{\tmfloat}[5]{
+  \renewcommand{\tmfloatcontents}{#4}
+  \setlength{\tmfloatwidth}{\widthof{\tmfloatcontents}+1in}
+  \ifthenelse{\equal{#2}{small}}
+    {\ifthenelse{\lengthtest{\tmfloatwidth > \linewidth}}
+      {\setlength{\tmfloatwidth}{\linewidth}}{}}
+    {\setlength{\tmfloatwidth}{\linewidth}}
+  \begin{minipage}[#1]{\tmfloatwidth}
+    \begin{center}
+      \tmfloatcontents
+      \captionof{#3}{#5}
+    \end{center}
+  \end{minipage}}
+%%%%%%%%%% End TeXmacs macros
+
+\begin{document}
+
+\begin{center}
+  \begin{tmparsep}{0.25em}
+    Université de Bourgogne
+    
+    1ère année de Master Informatique STIC
+    
+    Parcours Informatique
+    
+    Algorithme et complexité
+  \end{tmparsep}
+  
+  Le Jeu Othello
+  
+  Ghislain Loaec - Abdeldjalil Ramoul
+  
+  2012-2013
+\end{center}
+
+\begin{abstract}
+  Ce rapport présente le travaille effectué dans le cadre du projet
+  d'algorithme et complexité 
+\end{abstract}
+
+
+
+{\tableofcontents}
+
+\section*{Liste de figures}
+
+\begin{tmparsep}{0em}
+  {\small Position de départ ~\pageref{auto-4}
+  
+  Capture de jetons ~\pageref{auto-5}
+  
+  Une partie de l'arbre de jeu de Othello ~\pageref{auto-9}
+  
+  Exemple de déroulement de l'algorithme Minimax ~\pageref{auto-12}
+  
+  Exemple de déroulement du Minimax à profondeur limitée avec d=1
+  ~\pageref{auto-15}
+  
+  Exemple de déroulement du Minimax à profondeur limitée avec d=2
+  ~\pageref{auto-16}
+  
+  Exemples de coupures alpha et beta ~\pageref{auto-18}
+  
+  Exemple de déroulement de l'algorithme minimax alpha-beta avec d = 2
+  ~\pageref{auto-19}}
+\end{tmparsep}
+
+\section*{Liste de tableaux}
+
+\begin{tmparsep}{0em}
+  {\small Exemple de valeurs tactiques pour Othello ~\pageref{auto-10}}
+\end{tmparsep}
+
+\section{Introduction}
+
+Ce travail détaille le développement d'un simulateur du jeu Othello
+qui oppose un joueur à une intelligence artificielle. Il a été
+réalisé en se basant sur un algorithme de recherche du meilleur coup
+à jouer appelé Algorithme du minimax avec un élagage nommé
+élagage Alpha Beta. Nous allons présenter dans ce papier le jeu
+Othello et expliquer ces différentes règles. Dans la deuxième
+partie nous détaillerons la méthode du Minimax, ses limites et le
+principe de réduction de via un élagage alpha beta. Enfin nous
+présenterons le détail de l'application développée et
+l'implémention des concepts vus dans la présentation de l'algorithme.
+Nous conclurons sur les problèmes recontrés dans l'avancement de ce
+projet et les suggestions apportées dans la vue d'une amélioration
+potentielle du logiciel.
+
+\section{Le jeu Othello}
+
+Othello est jeu de société à deux joueurs à information
+parfaite avec un nombre fini de stratégies. Dans cette catégorie de
+jeu, les joueurs jouent à tour de rôle et à chaque étape de la
+partie, le joueur dispose de toutes les informations sur l'état du jeu.
+
+Une des caractéristiques qui rendent les jeux à information parfaite
+dignes d'étude, c'est que dans ce genre de jeu il existe toujours une
+solution optimale du fait de l'absence de l'incertitude à chaque
+mouvement. Néanmoins, ces solutions optimales sont souvent très
+couteuses à calculer et peuvent être insoluble pour des jeux comme
+Othello. Donc l'utilisation de l'intelligence artificielle pour jouer à ce
+genre de jeu doit se reposer sur des heuristiques pour donner une
+approximation du jeu optimal.
+
+\subsection{Principes du jeu}
+
+Othello se joue sur un tablier unicolore de 64 cases (8 x 8)
+numérotées verticalement de 1 à 8 et Horizontalement de A à H.
+Les deux joueurs disposent de 64 jetons blancs d'un côté et noir de
+l'autre. Chaque couleur représente un des joueurs.
+
+En début de partie deux jetons blancs sont posés sur les cases D4 et
+E5 et deux noirs sur les cases E4 et D5.
+
+
+
+
+
+\begin{figure}[h]
+  \caption{Position de départ}
+  \resizebox{5cm}{5cm}{
+    \centering
+    \includegraphics[scale=1]{images/board_start.jpg}
+  }  
+\end{figure}
+
+Les joueurs posent des jetons de leur couleur à tour de rôle selon des
+règles précises jusqu'à ce qu'aucun des deux ne puisse en mettre.
+A la fin on compte le nombre de jeton de chaque joueur, et c'est celui qui en
+a le plus qui gagne.
+
+Le but du jeu est de capturer les jetons adverses afin de changer leur
+couleur. La capture de pions survient lorsqu'un joueur place un de ses jetons
+à l'extrémité d'un alignement de jetons adverses contigus et dont
+l'autre extrémité est déjà occupée par un de ses propres
+jetons. Le ou les pions \ embrassés par les deux jeton du joueur sont
+capturés.
+
+
+\begin{figure}[h]
+  \caption {Capture de jetons}
+  \begin{flushleft}
+  \resizebox{!}{5cm}{
+    \centering
+    \includegraphics[scale=1]{images/board_capture.png} 
+  }
+  \end{flushleft}
+\end{figure}
+
+Dans cet exemple on peut voir que le jour blanc peut mettre son jeton dans la
+case F4, D6 ou G6. En mettant son jeton dans la case D6 il capture le jeton D5
+qui devient noir.
+
+\section{L'intelligence artificielle}
+
+Pour ce travail nous voulons opposer un joueur (humain) à une machine
+(intelligence artificielle). Pour cela, nous avons utilisé deux
+méthodes pour guider les choix de la machine :
+
+\subsection{Méthode aléatoire}
+
+Dans cette méthode, la machine répond aux actions du joueur par des
+choix de placements aléatoires parmi les positions possibles. Pour cela,
+elle va choisir des cases du tablier de fa{\c c}on aléatoire et
+vérifier si elles sont possibles en se basant sur les règles du jeu.
+Cette méthode permet d'avoir l'illusion de jouer contre une machine, sauf
+que cette machine n'est guidée par rien pour prendre sa décision et ne
+peut être un adversaire efficace contre un joueur averti.
+
+Pour rendre la machine plus intelligence il faut utiliser des méthodes
+qui évalueraient chaque coup et maximiseraient la probabilité de
+gagner. Une de ces méthodes consiste à utiliser l'algorithme minimax.
+
+\subsection{Méthode du minimax}
+
+La méthode du minimax est une technique de décision pour les jeux
+à deux joueurs basée sur le théorème du Minimax de Von Neumann
+dont l'objectif est de minimiser la perte maximale ou à l'inverse de
+maximiser le gain minimal pour un joueur.
+
+En se basant sur le théorème fondamental de la théorie des jeux
+à deux joueurs, démontré en 1928 par John von Neumann. On sait que
+pour tout jeu à deux joueurs et à information parfaite avec un nombre
+fini de stratégies, il existe une évaluation V et une stratégie
+mixte (Choix aléatoire parmi une liste de possibilités) telle que :
+
+\tmtextit{\begin{enumeratealpha}
+  \item Etant donné la stratégie du joueur A, le meilleur gain
+  possible pour le joueur A est V, et
+  
+  \item Etant donné la stratégie du joueur B, le\tmtextit{} meilleur
+  gain possible pour le joueur B est -V.
+\end{enumeratealpha}}
+
+On peut donc borner ses bénéfices et par la même occasion ceux de
+son adversaire. L'idée est de maximiser le gain minimum en minimisant le
+gain maximum de l'adversaire.
+
+Avant d'aborder en détails l'algorithme du minimax, nous allons d'abord
+expliquer quelques notions qui nous aiderons à mieux comprendre son
+fonctionnement.
+
+{\tmstrong{Les joueurs:}} Le joueur A est appelé Joueur Maximisant et le
+joueur B est appelé Joueur Minimisant. Dans ce travaille le joueur
+maximisant est l'ordinateur, puisque c'est lui qui va exécuter
+l'algorithme et le joueur minimisant est son adversaire humain.
+
+{\tmstrong{L'état du jeu: \tmtextmd{C'est une configuration possible du
+jeu. Par exemple dans Othello un état représente la disposition des
+jetons noirs et blancs dans l'Othellier. L'état initial représente
+l'état du jeu avant qu'il ait commencé. Et les états terminaux
+représentent les états qui mettent fin au jeu.}}}
+
+\tmtextbf{Le fils d'un état ei:} noté f(ei), il représente les
+états atteignables depuis ei.
+
+\tmtextbf{L'arbre de jeu :}\tmtextbf{} C'est un arbre qui contient tous les
+états possibles du jeu. La racine représente l'état initial, et
+les feuilles représentent les états terminaux. Chaque noeud
+intermédiaire représente une position de jeu et chaque arc le reliant
+à son fils un coup possible permettant de passer à la position
+représentée par ce fils. La figure 3 représente une partie de
+l'arbre de jeu Othello engendré à partir de l'état initial.
+
+
+\begin{figure}[h]
+  \caption {Une partie de l'arbre de jeu de Othello}
+  \resizebox{13.5cm}{!}{
+    \centering
+    \includegraphics[scale=1]{images/playing_tree.png} 
+  }
+\end{figure}
+
+
+
+La génération de l'arbre de jeu est très couteuse parce que ce
+dernier est généralement gigantesque. Par exemple le nombre total
+d'états pour le jeu d'échecs est de 35\^{}100. Donc on ne peut pas
+visiter tout l'arbre pour trouver les meilleurs coups à jouer.
+
+- La fonction d'évaluation : Appelée aussi fonction heuristique, c'est
+une fonction qui associe à chaque noeud une valeur estimant les gains du
+coup pour le joueur maximisant. Par exemple, pour le jeu Othello plusieurs
+fonctions d'évaluation peuvent être choisies. On peut utiliser une
+matrice de valeurs tactiques associée aux cases pour avoir une fonction
+d'évaluation plus performante. Le tableau qui suit représente une
+matrice de valeurs tactiques en début de partie.
+
+\begin{table}[h]
+  \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+    500  & -150  &  30  &  10  &  10  &  30  & -150  &  500 \\
+    \hline
+    -150  &  -250  & 0 & 0 & 0 & 0 & -250 & -150\\
+    \hline
+    30 & 0 & 1 & 2 & 2 & 1 & 0 & 30\\
+    \hline
+    10 & 0 & 2 & 16 & 16 & 2 & 0 & 10\\
+    \hline
+    10 & 0 & 2 & 16 & 16 & 2 & 0 & 10\\
+    \hline
+    30 & 0 & 1 & 2 & 2 & 1 & 0 & 30\\
+    \hline
+    -150 & -250 & 0 & 0 & 0 & 0 & -250 & -150\\
+    \hline
+    500 & -150 & 30 & 10 & 10 & 30 & -150 & 500\\
+    \hline
+  \end{tabular}
+  \caption{Exemple de valeurs tactiques pour Othello}
+\end{table}
+
+Dans les valeurs tactiques ci-dessus, nous constatons que les coins de
+l'othellier \ sont des positions très stratégiques puisque le gain
+estimé est de 500. Ceci s'explique par le fait qu'un jeton sur cette case
+est imprenable et offre la possibilité de capturer dans les mouvements
+suivant le maximum de jetons sur 3 axes différents. Il est également
+compréhensible que les cases qui entourent ces coins possèdent un gain
+négatif puis qu'il laisse une chance à l'advesaire de le capturer.
+
+Dans ce travail nous avons choisi de la pas considerer les valeurs tactiques
+cela nécéssite une connaissance appronfondie du jeu pour faire
+évoluer le tableau. Nous avous implémenté une fonction
+d'évaluation qui fait la différence entre le nombre de jetons du
+joueur et ceux de son adversaire. En plus d'être plus facile à
+programmer cette fonction d'évaluation laisse une chance de gagner aux
+joueurs non expérimentés comme nous.
+
+\subsubsection{Algorithme du Minimax}
+
+Le minimax est un algorithme pour la découverte de la solution optimale
+dans un jeu à deux joueurs à information parfaite. Il effectue une
+recherche en profondeur dans l'arbre de jeu pour décider du prochain coup
+à jouer. L'exploration des neouds de cet arbre est limitée par un
+paramètre de profondeur. Pour tout cela il est nécéssaire
+d'utiliser :
+
+\begin{itemizedot}
+  \item Une fonction pour générer l'arbre de jeu, afin de
+  déterminer les coups légaux à partir d'un état du jeu.
+  
+  \item Et une fonction heuristique pour évaluer un état de jeu.
+\end{itemizedot}
+
+à partir d'un état du jeu, l'algorithme visite l'arbre jusqu'à une
+profondeur préalablement définie. Il évalue ensuite les feuilles
+de l'arbre à l'aide de la fonction heuristique. Un score positif indique
+une bonne position pour le joueur A et un score négatif une mauvaise
+position, donc une bonne position pour le joueur B. Selon le joueur qui joue,
+le passage d'un niveau à l'autre dans l'arbre est maximisant (pour le
+joueur A) ou minimisant (pour le joueur B). Chaque joueur essaie de maximiser
+son gain et de minimiser celui de son adversaire.
+
+Le principe du minimax est de visiter l'arbre et de faire remonter la valeur
+minimax à la racine. La valeur minimax est calculée récursivement
+comme suit :
+
+\begin{itemizedot}
+  \tmtextit{\item Minimax(e) = h(e), si e est une feuille de l'arbre (jeu
+  terminé).
+  
+  \item Minimax(e) = max (Minimax(e1), . . . , Minimax(en)), si e est un noeud
+  Joueur \ \ \ \ \ \ (étape max)
+  
+  \item Minimax(e) = min (Minimax(e1), . . . , Minimax(en)), si e est un noeud
+  Adversaire \ \ (étape min)}
+\end{itemizedot}
+
+{\noindent}{\noindent}
+\begin{tabular}{l}
+
+\end{tabular}{\hspace*{\fill}}{\smallskip}
+
+La figure 4 explique sur un exemple a deux niveaux le déroulement de
+l'algorithme du minimax. On peut voir que la racine ne contient pas le gain le
+plus élevé mais plutôt le maximum des pertes minimales. Donc
+l'algorithme ne cherche pas le score le plus élevé mais plutôt le
+gain le plus sûr.
+
+\begin{figure}[h]
+  \caption {Exemple de déroulement de l'algorithme Minimax}
+  \resizebox{13.5cm}{!}{
+    \centering
+    \includegraphics[scale=1]{images/minimax_example.png} 
+  }
+\end{figure}
+
+\tmtextbf{Propriétés de l'algorithme minimax}
+
+Pour l'algorithme minimax la complexité en temps de est de O(b\^{}m) et
+la complexité en espace est O(bm).Avec b = facteur de branchement et m =
+est la profondeur de l'arbre. Nous n'avons pas pu avoir des chiffres pour
+Othello mais par exemple pour les échecs b = 35 et m = 100.
+
+\subsubsection{Problème d'espace et de temps de recherche}
+
+Supposons qu'on veuille explorer tout l'arbre de jeu à partir de n'importe
+quelle position. Cela permettrait de déterminer s'il existe un chemin
+menant à la victoire, ou au moins au nul. Mais à cause du problème
+de l'explosion combinatoire, la génération d'un tel arbre est trop
+coûteuse pour être envisageable.
+
+La première solution serait de limiter la profondeur d'exploration de
+l'abre. Cela permettrait de réduire le nombre de coups et de réponses
+à évaluer. Dans ce cas on atteint rarement les feuilles sauf en fin de
+partie. Cette solution s'appelle le Minimax à profondeur limitée.
+
+\subsubsection{Le Minimax à profondeur limitée}
+
+C'est une variante de l'algorithme du minimax initial qui rajoute un indice de
+profondeur afin de limiter la taille de l'arbre à générer. Le
+principe de cette variante est de :
+
+\tmtextit{\begin{itemizedot}
+  \item Générer l'arbre de jeu jusqu'à une profondeur d à
+  partir du noeud courant.
+  
+  \item Calculer la valeur de la fonction d'évaluation pour chaque noeud
+  feuille, pas forcément terminal.
+  
+  \item Propager ces valeurs jusqu'aux noeuds non terminaux.
+\end{itemizedot}}
+
+{\noindent}{\noindent}\begin{tabular}{l}
+
+\end{tabular}{\hspace*{\fill}}{\smallskip}
+
+{\tmstrong{Limites de l'algorithme Minimax à profondeur limitée}}
+
+Si la profondeur de recherche est trop petite. Cela veut dire que l'algorithme cherche à déterminer les coups immédiats qui maximisent le score
+du joueur A sans prévoir les coups de l'adversaire. La figure 5 montre le
+déroulement de l'algorithme Minimax à profondeur limitée avec d=1.
+
+\begin{figure}[h]
+  \caption {Exemple de déroulement du Minimax à profondeur limitée avec d=1}
+  \resizebox{13.5cm}{!}{
+    \centering
+    \includegraphics[scale=1]{images/minimax_d1_example.png} 
+  }
+\end{figure}
+
+On peut voir que le programme détermine les coups légaux, simule le
+jeu et évalue chacun d'entre eux. Il décide ensuite que le coup avec
+l'évaluation 11 est le meilleur et le propage au sommet. Cette
+opération conduit le programme à choisir le coup avec l'évaluation
+11 ce qui peut s'avérer être une décision désastreuse puisque
+comme on peut le voir dans la figure 6, Le coup qui amenait à une position
+immédiate de score 11, va en fait amener la position du jeu à un score
+de -2. En effet si l'adversaire joue le coup qui mène vers
+l'évaluation -2, alors le score final serait -2. On s'aper{\c c}oit alors
+que le coup qui menait à l'évaluation 6 limite les dég{\^a}ts avec
+un score de 1. Il sera donc préféré.
+
+\begin{figure}[h]
+  \caption {Exemple de déroulement du Minimax à profondeur limitée avec d=2}
+  \resizebox{13.5cm}{!}{
+    \centering
+    \includegraphics[scale=1]{images/minimax_d2_example.png}
+  }
+\end{figure}
+
+Le but est de maximiser la valeur de d pour prévoir le plus de coups
+possibles à l'avance. Mais sans pour autant être confronté au
+problème de l'explosion combinatoire. Pour cela on essaie d'élaguer
+l'arbre de recherche. On peut noter que dans la figure 6, il n'est pas
+nécessaire d'explorer toute la branche avec l'évaluation 0, puisque
+cette dernière est inférieure à 1 (on cherche le max). Le calcul
+des autres noeuds ne pourra pas améliorer la situation même si leurs
+scores sont meilleures que 0. La variante Alpha Beta du Minimax utilise cet
+élagage pour diminuer le nombre de branches à générer et
+permettre par la même occasion d'augmenter la valeur de d.
+
+\subsubsection{Le Minimax avec élagage {\tmem{Alpha Beta}}}
+
+L'élagage Alpha Beta est une méthode permettant de réduire la
+taille de l'arbre de jeu en élaguant les parties dont l'évaluation ne
+contribue pas à celle de la racine. Cette méthode augmente de
+manière significative les performances de l'algorithme Minimax sans
+affecter le résultat. Pour élaguer certaines branches de l'arbre de
+jeu on définit deux bornes $\alpha \nocomma \tmop{et} \beta$ tel que :
+
+$\alpha$ représente de la borne inférieure de la valeur du noeud :
+\begin{itemizedot}
+  \item $\alpha$ = h(e) sur les feuilles, et initialisée à -$\infty$
+  ailleurs.
+  
+  \item Dans les noeuds joueurs, $\alpha$ = MAX des valeurs obtenues sur les
+  fils visités jusque-là.
+  
+  \item Dans les noeuds adversaires, elle est égale à la valeur
+  $\alpha$ de son prédécesseur.
+\end{itemizedot}
+\ \ $\beta$ représente de la borne supérieure de la valeur du noeud :
+\begin{itemizedot}
+  \item $\beta$ = h(e) sur les feuilles, et initialisée à +$\infty$
+  ailleurs.
+  
+  \item Dans les noeuds adversaires, $\beta$ = MIN des valeurs obtenues sur
+  les fils visités jusque-là.
+  
+  \item Dans les noeuds joueurs elle est égale à la valeur $\beta$ de
+  son prédécesseur.
+\end{itemizedot}
+Pour Othello, nous avons remplacé les valeurs -$\infty$ et +$\infty$
+respectivement par les valeurs -64 et + 64, puisque dans Othello la
+différence max entre les jetons des joueurs (fonction heuristique) ne peut
+dépasser 64. Les noeuds élagués sont ceux tel que
+
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
+\ \ \ \ \ \ \ $ H ( e) \in [ \tmmathbf{\beta} \nocomma \nocomma,
+\tmmathbf{\alpha}] \tmop{et} \tmmathbf{\alpha} \geqslant \tmmathbf{\beta}$
+
+Donc l'alpha-coupure intervient dans un noeud adversaire (MIN) lorsque sa
+beta-valeur est inférieure à l'alpha-valeur de son parent. Et la
+beta-coupure intervient dans un noeud joueur (MAX) lorsque sa alpha-valeur est supérieure à la beta-valeur de son parent.
+
+\begin{figure}[h]
+  \caption {Exemples de coupures alpha et beta}
+  \resizebox{15cm}{!}{
+    \centering
+    \includegraphics[scale=1]{images/minimax_ab_example.png}
+  }
+\end{figure}
+
+{\noindent}{\noindent}\begin{tabular}{l}
+ 
+\end{tabular}{\hspace*{\fill}}{\smallskip}
+
+Dans la figure suivante nous observons l'exécution de l'algorithme du
+minimax avec élagage alpha beta sur l'arbre de jeu vu dans la figure 6.
+
+
+\begin{figure}[h]
+  \caption {Exemple de déroulement de l'algorithme minimax alpha-beta avec d = 2}
+  \resizebox{390pt}{!}{
+    \centering
+    \includegraphics[scale=1]{images/minimax_ab_example.png}
+  }
+\end{figure}
+
+On peut observer que le résultat reste le même que celui obtenu en
+appliquant l'algorithme du minimax classique. Mais l'élagage alpha beta a
+permis de ne pas visiter les dernières branches, ce qui augmente les
+performances de l'algorithme et nous permet par la même occasion
+d'augmenter la profondeur d'exploration du graphe. L'ordre d'apparition des
+noeuds influence beaucoup le rendement de l'élagage. Examiner d'abord les
+noeuds à forte valeur d'évaluation maximise le rendement de
+l'algorithme.
+
+La complexité en temps de l'algorithme minimax avec élagage alpha beta
+revient dans le meilleur des cas à O(b\^{}(m/2)). Cela permet d'augmenter
+la profondeur de recherche pour améliorer les résultats sans trop
+affecter les performances. Et dans le pire des cas elle est identique à
+celle du minimax.
+
+
+\section{Implémentation}
+
+Dans cette partie nous allons détailler les étapes d'implémentation de l'application. 
+
+\subsection{Compilation}
+
+Afin de générer les fichiers binaires, nous avons créé un Makefile très générique paramétrable à souhait. Il semblerait que les performances d'exécution soit optimisées en utilisant le compilateur ocamlopt. Ce qui rend le choix intéressant  dans un cas d'utilisation comme le nôtre ou le programme est sujet à des explosions combinatoires. 
+
+Pour une compilation standard avec \texttt{ocamlc}, utiliser : \texttt{make}
+
+\begin{figure}[H]
+\caption{Utilisation du Makefile}
+\begin{verbatim}
+# Pour recompiler le système progressivement :
+#     make
+# Pour recalculer les dépendances entre les modules :
+#     make depend
+# Pour supprimer l'exécutable et les fichiers compilés :
+#     make clean
+# Pour compiler avec le compileur de code natif
+#     make opt
+\end{verbatim}
+\end{figure}
+
+\subsection{Utilisation}
+
+Afin de lancer l'application, tapez: \texttt{./othello}
+
+Il est possible de spécifier des arguments à l'exécutable qui vont influencer le déroulement du jeu. Vous pouvez obtenir la liste ces options avec :
+
+\begin{figure}[H]
+\caption{Utilisation de l'exécutable}
+\begin{verbatim}
+$ ./othello --help
+othello
+  -size <int> : Taille d'une case en pixels
+  -ia <bool> : Intelligence artificielle on/off
+               | true  -> Minimax ab 
+               | false -> Case aléatoire
+  -depth <int> : Profondeur maximale d'exploration 
+                 de l'arbre des possibilités Minimax 
+  -background <int> <int> <int> : Couleur du fond (RGB)
+  -help : Afficher cette liste d'options
+  --help : Afficher cette liste d'options
+\end{verbatim}
+\end{figure}
+
+Les options par défaut de l'application sont :
+
+\begin{figure}[H]
+\caption{Configuration par défaut}
+{\scriptsize\noindent
+\begin{longtable}{r|l}
+\mlcodeline{1}{\mlkeyword{val}~cell\_{}size~\mloperator{\mbox{\COLON}}~int~ref~\mlkeyword{=}~\mloperator{\{}contents~\mlkeyword{=}~50\mloperator{\}}
+}
+\mlcodeline{2}{\mlkeyword{val}~bg\_{}r~\mloperator{\mbox{\COLON}}~int~ref~\mlkeyword{=}~\mloperator{\{}contents~\mlkeyword{=}~50\mloperator{\}}
+}
+\mlcodeline{3}{\mlkeyword{val}~bg\_{}g~\mloperator{\mbox{\COLON}}~int~ref~\mlkeyword{=}~\mloperator{\{}contents~\mlkeyword{=}~150\mloperator{\}}
+}
+\mlcodeline{4}{\mlkeyword{val}~bg\_{}b~\mloperator{\mbox{\COLON}}~int~ref~\mlkeyword{=}~\mloperator{\{}contents~\mlkeyword{=}~50\mloperator{\}}
+}
+\mlcodeline{5}{\mlkeyword{val}~size~\mloperator{\mbox{\COLON}}~int~ref~\mlkeyword{=}~\mloperator{\{}contents~\mlkeyword{=}~8\mloperator{\}}
+}
+\mlcodeline{6}{\mlkeyword{val}~ia~\mloperator{\mbox{\COLON}}~bool~ref~\mlkeyword{=}~\mloperator{\{}contents~\mlkeyword{=}~\mlkeywordB{true}\mloperator{\}}
+}
+\mlcodeline{7}{\mlkeyword{val}~depth~\mloperator{\mbox{\COLON}}~int~ref~\mlkeyword{=}~\mloperator{\{}contents~\mlkeyword{=}~4\mloperator{\}}
+}
+\end{longtable}
+}
+\end{figure}
+
+\subsection{Liste exhaustive des prototypes}
+
+
+\subsection{Algorithmes intéressants}
+
+\subsubsection{Direction Légale}
+
+Methode de test de direction légal => Vrai si la direction est légale
+
+\begin{figure}[H]
+\caption{Direction légale}
+{\scriptsize\noindent
+\begin{longtable}{r|l}
+\mlcodeline{1}{\mlcomments{(*~Methode~de~test~de~direction~légal~{=>\mbox{}}~Vrai~si~la~direction~est~légale~*)}
+}
+\mlcodeline{2}{\mlkeywordA{let}~playable\_{}dir~board~c~(x\mloperator{\mbox{,}}~y)~(dx\mloperator{\mbox{,}}~dy)~\mlkeyword{=}
+}
+\mlcodeline{3}{~~\mlkeywordA{let~rec}~playable\_{}dir\_{}rec~(x\mloperator{\mbox{,}}~y)~valid~\mlkeyword{=}
+}
+\mlcodeline{4}{~~~~\mlkeyword{if}~not~(check\_{}pos~board~x~y)~\mlkeyword{then}
+}
+\mlcodeline{5}{~~~~~~\mlkeywordB{false}
+}
+\mlcodeline{6}{~~~~\mlkeyword{else}~(
+}
+\mlcodeline{7}{~~~~~~\mlkeyword{match}~board\mloperator{.}(x)\mloperator{.}(y)~\mlkeyword{with}
+}
+\mlcodeline{8}{~~~~~~~~\mloperator{|}~Empty~\mlkeyword{->}~\mlkeywordB{false}
+}
+\mlcodeline{9}{~~~~~~~~\mloperator{|}~cell~\mlkeyword{->}
+}
+\mlcodeline{10}{~~~~~~~~~~\mlkeyword{if}~cell~\mlkeyword{=}~(get\_{}opponent~c)~\mlkeyword{then}
+}
+\mlcodeline{11}{~~~~~~~~~~~~playable\_{}dir\_{}rec~(x~\mloperator{+}~dx\mloperator{\mbox{,}}~y~\mloperator{+}~dy)~\mlkeywordB{true}
+}
+\mlcodeline{12}{~~~~~~~~~~\mlkeyword{else}
+}
+\mlcodeline{13}{~~~~~~~~~~~~valid
+}
+\mlcodeline{14}{~~~~)
+}
+\mlcodeline{15}{~~~~\mlkeywordA{in}~playable\_{}dir\_{}rec~(x~\mloperator{+}~dx\mloperator{\mbox{,}}~y~\mloperator{+}~dy)~\mlkeywordB{false}
+}
+\mlcodeline{16}{\mloperator{\mbox{\SC}\mbox{\SC}}}
+\end{longtable}
+}
+\end{figure}
+
+
+\subsubsection{Coup Légal}
+
+\begin{figure}[H]
+\caption{Coup légal}
+{\scriptsize\noindent
+\begin{longtable}{r|l}
+\mlcodeline{1}{\mlcomments{(*~Methode~de~test~de~coup~légal~{=>\mbox{}}~Vrai~si~le~coup~est~légal~*)}
+}
+\mlcodeline{2}{\mlkeywordA{let}~playable\_{}cell~board~c~x~y~\mlkeyword{=}
+}
+\mlcodeline{3}{~~\mlkeyword{if}~not~(check\_{}pos~board~x~y)~\mlkeyword{then}
+}
+\mlcodeline{4}{~~~~\mlkeywordB{false}
+}
+\mlcodeline{5}{~~\mlkeyword{else}~(
+}
+\mlcodeline{6}{~~~~\mlkeywordA{let}~directions~\mlkeyword{=}~\mloperator{[}~
+}
+\mlcodeline{7}{~~~~~~\mloperator{(-}1\mloperator{\mbox{,}}~-1)\mloperator{\mbox{\SC}}~\mloperator{(-}1\mloperator{\mbox{,}}~0)\mloperator{\mbox{\SC}}~\mloperator{(-}1\mloperator{\mbox{,}}~1)\mloperator{\mbox{\SC}}~
+}
+\mlcodeline{8}{~~~~~~(0~\mloperator{\mbox{,}}~-1)\mloperator{\mbox{\SC}}~\mlcomments{(*~X~*)}~~(0~\mloperator{\mbox{,}}~1)\mloperator{\mbox{\SC}}~
+}
+\mlcodeline{9}{~~~~~~(1~\mloperator{\mbox{,}}~-1)\mloperator{\mbox{\SC}}~(1~\mloperator{\mbox{,}}~0)\mloperator{\mbox{\SC}}~(1~\mloperator{\mbox{,}}~1)~
+}
+\mlcodeline{10}{~~~~\mloperator{]}
+}
+\mlcodeline{11}{~~~~\mlkeywordA{in}~\mlkeyword{match}~board\mloperator{.}(x)\mloperator{.}(y)~\mlkeyword{with}
+}
+\mlcodeline{12}{~~~~~~\mloperator{|}~Empty~\mlkeyword{->}~(~\mlkeywordB{true}~\mloperator{\&\&}~(	
+}
+\mlcodeline{13}{		~~~~\mlmodulename{List}\mbox{}\mloperator{.}fold\_{}left
+}
+\mlcodeline{14}{		~~~~~~(\mlkeyword{fun}~a~b~\mlkeyword{->}~a~\mloperator{||}~b)~
+}
+\mlcodeline{15}{		~~~~~~\mlkeywordB{false}
+}
+\mlcodeline{16}{~~~~~~~~~~~~~~(\mlmodulename{List}\mbox{}\mloperator{.}map
+}
+\mlcodeline{17}{~~~~~~~~~~~~~~~~(\mlkeyword{fun}~d~\mlkeyword{->}~playable\_{}dir~board~c~(x\mloperator{\mbox{,}}~y)~d)
+}
+\mlcodeline{18}{~~~~~~~~~~~~~~~~directions	
+}
+\mlcodeline{19}{~~~~~~~~~~~~~~)
+}
+\mlcodeline{20}{~~~~~~~~~~~~)
+}
+\mlcodeline{21}{~~~~~~~~~~)~
+}
+\mlcodeline{22}{~~~~~~~\mloperator{|}~\mloperator{\_}~\mlkeyword{->}~\mlkeywordB{false}	
+}
+\mlcodeline{23}{~~)
+}
+\mlcodeline{24}{\mloperator{\mbox{\SC}\mbox{\SC}}}
+\end{longtable}
+}
+\end{figure}
+
+\subsubsection{Simulation de jeu}
+
+\begin{figure}[H]
+\caption{Simuler un coup}
+{\scriptsize\noindent
+\begin{longtable}{r|l}
+\mlcodeline{1}{\mlcomments{(*~Méthode~pour~simuler~le~jeu~sur~une~case~*)}
+}
+\mlcodeline{2}{\mlkeywordA{let}~sim\_{}play\_{}cell~board~c~x~y~\mlkeyword{=}
+}
+\mlcodeline{3}{~~\mlkeywordA{let}~sim\_{}board~\mlkeyword{=}~(copy\_{}board~board)~\mlkeywordA{in}
+}
+\mlcodeline{4}{~~\mlkeywordA{let}~directions~\mlkeyword{=}~\mloperator{[}~
+}
+\mlcodeline{5}{~~~~\mloperator{(-}1\mloperator{\mbox{,}}~-1)\mloperator{\mbox{\SC}}~\mloperator{(-}1\mloperator{\mbox{,}}~0)\mloperator{\mbox{\SC}}~\mloperator{(-}1\mloperator{\mbox{,}}~1)\mloperator{\mbox{\SC}}~
+}
+\mlcodeline{6}{~~~~(0~\mloperator{\mbox{,}}~-1)\mloperator{\mbox{\SC}}~\mlcomments{(*~X~*)}~~(0~\mloperator{\mbox{,}}~1)\mloperator{\mbox{\SC}}~
+}
+\mlcodeline{7}{~~~~(1~\mloperator{\mbox{,}}~-1)\mloperator{\mbox{\SC}}~(1~\mloperator{\mbox{,}}~0)\mloperator{\mbox{\SC}}~(1~\mloperator{\mbox{,}}~1)~
+}
+\mlcodeline{8}{~~\mloperator{]}
+}
+\mlcodeline{9}{~~\mlkeywordA{and}~opponent~\mlkeyword{=}~(get\_{}opponent~c)~
+}
+\mlcodeline{10}{~~\mlkeywordA{in}~(
+}
+\mlcodeline{11}{~~~~\mlmodulename{List}\mbox{}\mloperator{.}iter~											
+}
+\mlcodeline{12}{~~~~~~(\mlkeyword{fun}~(dx\mloperator{\mbox{,}}~dy)~\mlkeyword{->}
+}
+\mlcodeline{13}{~~~~~~~~\mlkeyword{if}~(playable\_{}dir~sim\_{}board~c~(x\mloperator{\mbox{,}}~y)~(dx\mloperator{\mbox{,}}~dy))~\mlkeyword{then}
+}
+\mlcodeline{14}{~~~~~~~~~~\mlkeywordA{let~rec}~take~(x\mloperator{\mbox{,}}~y)~\mlkeyword{=}
+}
+\mlcodeline{15}{~~~~~~~~~~~~\mlkeyword{if}~(check\_{}pos~sim\_{}board~x~y)~\mlkeyword{then}	
+}
+\mlcodeline{16}{~~~~~~~~~~~~\mlkeyword{if}~(sim\_{}board\mloperator{.}(x)\mloperator{.}(y)~\mlkeyword{=}~opponent)~\mlkeyword{then}~(
+}
+\mlcodeline{17}{~~~~~~~~~~~~~~sim\_{}board\mloperator{.}(x)\mloperator{.}(y)~\mloperator{<\mbox{}-}~c\mloperator{\mbox{\SC}}
+}
+\mlcodeline{18}{~~~~~~~~~~~~~~take~(x~\mloperator{+}~dx\mloperator{\mbox{,}}~y~\mloperator{+}~dy)
+}
+\mlcodeline{19}{~~~~~~~~~~~~)
+}
+\mlcodeline{20}{~~~~~~~~~~\mlkeywordA{in}~take~(x~\mloperator{+}~dx\mloperator{\mbox{,}}~y~\mloperator{+}~dy)
+}
+\mlcodeline{21}{~~~~~~)
+}
+\mlcodeline{22}{~~~~~~directions
+}
+\mlcodeline{23}{~~)\mloperator{\mbox{\SC}}~
+}
+\mlcodeline{24}{~~sim\_{}board\mloperator{.}(x)\mloperator{.}(y)~\mloperator{<\mbox{}-}~c\mloperator{\mbox{\SC}}
+}
+\mlcodeline{25}{~~sim\_{}board
+}
+\mlcodeline{26}{\mloperator{\mbox{\SC}\mbox{\SC}}}
+\end{longtable}
+}
+\end{figure}
+
+
+\section{Module {\tt{Othello}}}
+\label{module:Othello}\index{Othello@\verb`Othello`}
+
+
+\ocamldocvspace{0.5cm}
+
+
+
+\label{val:Othello.cell-underscoresize}\begin{ocamldoccode}
+val cell_size : int Pervasives.ref
+\end{ocamldoccode}
+\index{cell-underscoresize@\verb`cell_size`}
+
+
+
+
+\label{val:Othello.bg-underscorer}\begin{ocamldoccode}
+val bg_r : int Pervasives.ref
+\end{ocamldoccode}
+\index{bg-underscorer@\verb`bg_r`}
+
+
+
+
+\label{val:Othello.bg-underscoreg}\begin{ocamldoccode}
+val bg_g : int Pervasives.ref
+\end{ocamldoccode}
+\index{bg-underscoreg@\verb`bg_g`}
+
+
+
+
+\label{val:Othello.bg-underscoreb}\begin{ocamldoccode}
+val bg_b : int Pervasives.ref
+\end{ocamldoccode}
+\index{bg-underscoreb@\verb`bg_b`}
+
+
+
+
+\label{val:Othello.size}\begin{ocamldoccode}
+val size : int Pervasives.ref
+\end{ocamldoccode}
+\index{size@\verb`size`}
+
+
+
+
+\label{val:Othello.ia}\begin{ocamldoccode}
+val ia : bool Pervasives.ref
+\end{ocamldoccode}
+\index{ia@\verb`ia`}
+
+
+
+
+\label{val:Othello.depth}\begin{ocamldoccode}
+val depth : int Pervasives.ref
+\end{ocamldoccode}
+\index{depth@\verb`depth`}
+
+
+
+
+\label{type:Othello.cell}\begin{ocamldoccode}
+type cell =
+  | White
+  | Black
+  | Empty
+\end{ocamldoccode}
+\index{cell@\verb`cell`}
+
+
+
+
+\label{type:Othello.board}\begin{ocamldoccode}
+type board = cell array array 
+\end{ocamldoccode}
+\index{board@\verb`board`}
+
+
+
+
+\label{type:Othello.coord}\begin{ocamldoccode}
+type coord = int * int 
+\end{ocamldoccode}
+\index{coord@\verb`coord`}
+
+
+
+
+\label{type:Othello.coord-underscorelist}\begin{ocamldoccode}
+type coord_list = coord list 
+\end{ocamldoccode}
+\index{coord-underscorelist@\verb`coord_list`}
+
+
+
+
+\label{val:Othello.make-underscoreothello-underscoreboard}\begin{ocamldoccode}
+val make_othello_board : cell array array
+\end{ocamldoccode}
+\index{make-underscoreothello-underscoreboard@\verb`make_othello_board`}
+
+
+
+
+\label{val:Othello.copy-underscoreboard}\begin{ocamldoccode}
+val copy_board : 'a array array -> 'a array array
+\end{ocamldoccode}
+\index{copy-underscoreboard@\verb`copy_board`}
+
+
+
+
+\label{val:Othello.make-underscoreboard}\begin{ocamldoccode}
+val make_board : cell array array
+\end{ocamldoccode}
+\index{make-underscoreboard@\verb`make_board`}
+
+
+
+
+\label{val:Othello.display-underscorecell}\begin{ocamldoccode}
+val display_cell : cell array array -> int -> int -> unit
+\end{ocamldoccode}
+\index{display-underscorecell@\verb`display_cell`}
+
+
+
+
+\label{val:Othello.display-underscoreboard}\begin{ocamldoccode}
+val display_board : cell array array -> unit
+\end{ocamldoccode}
+\index{display-underscoreboard@\verb`display_board`}
+
+
+
+
+\label{val:Othello.display-underscoremessage}\begin{ocamldoccode}
+val display_message : string -> unit
+\end{ocamldoccode}
+\index{display-underscoremessage@\verb`display_message`}
+
+
+
+
+\label{val:Othello.count}\begin{ocamldoccode}
+val count : 'a array array -> 'a -> int
+\end{ocamldoccode}
+\index{count@\verb`count`}
+
+
+
+
+\label{val:Othello.is-underscorefinished}\begin{ocamldoccode}
+val is_finished : cell array array -> bool
+\end{ocamldoccode}
+\index{is-underscorefinished@\verb`is_finished`}
+
+
+
+
+\label{val:Othello.check-underscorepos}\begin{ocamldoccode}
+val check_pos : 'a array array -> int -> int -> bool
+\end{ocamldoccode}
+\index{check-underscorepos@\verb`check_pos`}
+
+
+
+
+\label{val:Othello.get-underscoreopponent}\begin{ocamldoccode}
+val get_opponent : cell -> cell
+\end{ocamldoccode}
+\index{get-underscoreopponent@\verb`get_opponent`}
+
+
+
+
+\label{val:Othello.playable-underscoredir}\begin{ocamldoccode}
+val playable_dir : cell array array -> cell -> int * int -> int * int -> bool
+\end{ocamldoccode}
+\index{playable-underscoredir@\verb`playable_dir`}
+
+
+
+
+\label{val:Othello.playable-underscorecell}\begin{ocamldoccode}
+val playable_cell : cell array array -> cell -> int -> int -> bool
+\end{ocamldoccode}
+\index{playable-underscorecell@\verb`playable_cell`}
+
+
+
+
+\label{val:Othello.play-underscorecell}\begin{ocamldoccode}
+val play_cell : cell array array -> cell -> int -> int -> unit
+\end{ocamldoccode}
+\index{play-underscorecell@\verb`play_cell`}
+
+
+
+
+\label{val:Othello.sim-underscoreplay-underscorecell}\begin{ocamldoccode}
+val sim_play_cell :
+  cell array array ->
+  cell -> int -> int -> cell array array
+\end{ocamldoccode}
+\index{sim-underscoreplay-underscorecell@\verb`sim_play_cell`}
+
+
+
+
+\label{val:Othello.playable-underscorecells}\begin{ocamldoccode}
+val playable_cells : cell array array -> cell -> (int * int) list
+\end{ocamldoccode}
+\index{playable-underscorecells@\verb`playable_cells`}
+
+
+
+
+\label{val:Othello.score}\begin{ocamldoccode}
+val score : cell array array -> cell -> int
+\end{ocamldoccode}
+\index{score@\verb`score`}
+
+
+
+
+\label{val:Othello.display-underscorescores}\begin{ocamldoccode}
+val display_scores : cell array array -> unit
+\end{ocamldoccode}
+\index{display-underscorescores@\verb`display_scores`}
+
+
+
+
+\label{val:Othello.fold-underscoreuntil}\begin{ocamldoccode}
+val fold_until : ('a -> 'b -> 'a) -> ('a -> bool) -> 'a -> 'b list -> 'a
+\end{ocamldoccode}
+\index{fold-underscoreuntil@\verb`fold_until`}
+
+
+
+
+\label{val:Othello.alpha-underscorebeta}\begin{ocamldoccode}
+val alpha_beta : cell array array -> cell -> int -> int -> int -> int
+\end{ocamldoccode}
+\index{alpha-underscorebeta@\verb`alpha_beta`}
+
+
+
+
+\label{val:Othello.ia-underscoreturn}\begin{ocamldoccode}
+val ia_turn : cell array array -> unit
+\end{ocamldoccode}
+\index{ia-underscoreturn@\verb`ia_turn`}
+
+
+
+
+\label{val:Othello.rdm-underscoreturn}\begin{ocamldoccode}
+val rdm_turn : cell array array -> unit
+\end{ocamldoccode}
+\index{rdm-underscoreturn@\verb`rdm_turn`}
+
+
+
+
+\label{val:Othello.player-underscoreturn}\begin{ocamldoccode}
+val player_turn : cell array array -> unit
+\end{ocamldoccode}
+\index{player-underscoreturn@\verb`player_turn`}
+
+
+
+
+\label{val:Othello.end-underscoremessage}\begin{ocamldoccode}
+val end_message : cell array array -> string
+\end{ocamldoccode}
+\index{end-underscoremessage@\verb`end_message`}
+
+
+
+
+\label{val:Othello.continue}\begin{ocamldoccode}
+val continue : unit -> bool
+\end{ocamldoccode}
+\index{continue@\verb`continue`}
+
+
+
+
+\label{val:Othello.game}\begin{ocamldoccode}
+val game : unit -> unit -> unit
+\end{ocamldoccode}
+\index{game@\verb`game`}
+
+
+
+
+\label{val:Othello.speclist}\begin{ocamldoccode}
+val speclist : (string * Arg.spec * string) list
+\end{ocamldoccode}
+\index{speclist@\verb`speclist`}
+
+
+
+
+\label{val:Othello.main}\begin{ocamldoccode}
+val main : unit -> unit -> unit
+\end{ocamldoccode}
+\index{main@\verb`main`}
+
+
+\end{document}
