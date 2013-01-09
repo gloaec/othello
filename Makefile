@@ -93,7 +93,7 @@ $(EXEC): $(OBJS)
 
 clean::
 	rm -f $(addprefix $(SRC_PATH), *.cm[iox] *~ .*~ )
-	rm -f $(addprefix $(SRC_PATH), $(EXEC))
+	rm -f $(EXEC)
 	rm -f $(addprefix $(SRC_PATH), $(SOURCES)).opt
 
 .ocamlinit.input: Makefile
