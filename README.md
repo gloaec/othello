@@ -21,16 +21,16 @@ or download the package : [othello-minimax.tar.gz](https://gitorious.org/othello
 	4 - `./othello` Run the application
 	
 ## Options
-```
-othello
-  -cellsize <int> : Set cell size in pixels
-  -size <int> : Set Board length
-  -ia <bool> : Artificial intelligence on/off
-  -depth <int> : Algorithm minimax depth
-  -background <int> <int> <int> : set background (RGB)
-  -help  Display this list of options
-  --help  Display this list of options
-```
+
+	othello
+  	  -cellsize <int> : Set cell size in pixels
+  	  -size <int> : Set Board length
+  	  -ia <bool> : Artificial intelligence on/off
+  	  -depth <int> : Algorithm minimax depth
+  	  -background <int> <int> <int> : set background (RGB)
+  	  -help  Display this list of options
+  	  --help  Display this list of options
+
 ## More screenshots 
 
 
