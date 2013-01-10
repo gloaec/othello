@@ -644,9 +644,6 @@ Les options par défaut de l'application sont :
 }
 \end{figure}
 
-\subsection{Liste exhaustive des prototypes}
-
-
 \subsection{Algorithmes intéressants}
 
 \subsubsection{Direction Légale}
@@ -812,8 +809,12 @@ Methode de test de direction légal => Vrai si la direction est légale
 \end{figure}
 
 
-\section{Module {\tt{Othello}}}
+\subsubsection{Algorimthe Minimax \tmem{Alpha Beta}}
+
+\section{Module {\tt{Othello}} : Documentation}
 \label{module:Othello}\index{Othello@\verb`Othello`}
+
+
 
 
 \ocamldocvspace{0.5cm}
@@ -824,7 +825,16 @@ Methode de test de direction légal => Vrai si la direction est légale
 val cell_size : int Pervasives.ref
 \end{ocamldoccode}
 \index{cell-underscoresize@\verb`cell_size`}
+\begin{ocamldocdescription}
+Définition de la largeur des cellules en pixels
 
+
+\end{ocamldocdescription}
+
+
+
+
+Défaut: 75
 
 
 
@@ -832,7 +842,16 @@ val cell_size : int Pervasives.ref
 val bg_r : int Pervasives.ref
 \end{ocamldoccode}
 \index{bg-underscorer@\verb`bg_r`}
+\begin{ocamldocdescription}
+Niveau de rouge de couleur du fond: {\tt{0:255}}
 
+
+\end{ocamldocdescription}
+
+
+
+
+Défaut: 50
 
 
 
@@ -840,7 +859,16 @@ val bg_r : int Pervasives.ref
 val bg_g : int Pervasives.ref
 \end{ocamldoccode}
 \index{bg-underscoreg@\verb`bg_g`}
+\begin{ocamldocdescription}
+Niveau de vert de couleur du fond : {\tt{0:255}}
 
+
+\end{ocamldocdescription}
+
+
+
+
+Défaut: 150
 
 
 
@@ -848,7 +876,16 @@ val bg_g : int Pervasives.ref
 val bg_b : int Pervasives.ref
 \end{ocamldoccode}
 \index{bg-underscoreb@\verb`bg_b`}
+\begin{ocamldocdescription}
+Niveau de bleu de couleur du fond : {\tt{0:255}}
 
+
+\end{ocamldocdescription}
+
+
+
+
+Défaut: 50
 
 
 
@@ -856,7 +893,16 @@ val bg_b : int Pervasives.ref
 val size : int Pervasives.ref
 \end{ocamldoccode}
 \index{size@\verb`size`}
+\begin{ocamldocdescription}
+Nombre de cases qui constitue l'arrête du plateau de jeu
 
+
+\end{ocamldocdescription}
+
+
+
+
+Défaut: 8
 
 
 
@@ -864,7 +910,16 @@ val size : int Pervasives.ref
 val ia : bool Pervasives.ref
 \end{ocamldoccode}
 \index{ia@\verb`ia`}
+\begin{ocamldocdescription}
+Utilisation ou non de l'intelligence artificielle
 
+
+\end{ocamldocdescription}
+
+
+
+
+Défaut: true (Activée)
 
 
 
@@ -872,17 +927,44 @@ val ia : bool Pervasives.ref
 val depth : int Pervasives.ref
 \end{ocamldoccode}
 \index{depth@\verb`depth`}
+\begin{ocamldocdescription}
+Profondeur d'exploration de l'arbre de coups légaux
 
+
+\end{ocamldocdescription}
+
+
+
+
+Défaut: 4
 
 
 
 \label{type:Othello.cell}\begin{ocamldoccode}
 type cell =
   | White
+\end{ocamldoccode}
+\begin{ocamldoccomment}
+Jeton blanc
+\end{ocamldoccomment}
+\begin{ocamldoccode}
   | Black
+\end{ocamldoccode}
+\begin{ocamldoccomment}
+Jeton noir
+\end{ocamldoccomment}
+\begin{ocamldoccode}
   | Empty
 \end{ocamldoccode}
+\begin{ocamldoccomment}
+Case vide
+\end{ocamldoccomment}
 \index{cell@\verb`cell`}
+\begin{ocamldocdescription}
+Valeurs possibles d'une case
+
+
+\end{ocamldocdescription}
 
 
 
@@ -891,6 +973,11 @@ type cell =
 type board = cell array array 
 \end{ocamldoccode}
 \index{board@\verb`board`}
+\begin{ocamldocdescription}
+Matrice représentative du tablier : tableau de cases à 2 dimensions
+
+
+\end{ocamldocdescription}
 
 
 
@@ -899,6 +986,11 @@ type board = cell array array
 type coord = int * int 
 \end{ocamldoccode}
 \index{coord@\verb`coord`}
+\begin{ocamldocdescription}
+Représentation d'un position par ses coordonnées
+
+
+\end{ocamldocdescription}
 
 
 
@@ -907,22 +999,11 @@ type coord = int * int
 type coord_list = coord list 
 \end{ocamldoccode}
 \index{coord-underscorelist@\verb`coord_list`}
+\begin{ocamldocdescription}
+Liste représentative de positions
 
 
-
-
-\label{val:Othello.make-underscoreothello-underscoreboard}\begin{ocamldoccode}
-val make_othello_board : cell array array
-\end{ocamldoccode}
-\index{make-underscoreothello-underscoreboard@\verb`make_othello_board`}
-
-
-
-
-\label{val:Othello.copy-underscoreboard}\begin{ocamldoccode}
-val copy_board : 'a array array -> 'a array array
-\end{ocamldoccode}
-\index{copy-underscoreboard@\verb`copy_board`}
+\end{ocamldocdescription}
 
 
 
@@ -931,7 +1012,50 @@ val copy_board : 'a array array -> 'a array array
 val make_board : cell array array
 \end{ocamldoccode}
 \index{make-underscoreboard@\verb`make_board`}
+\begin{ocamldocdescription}
+Méthode de construction du plateau
 
+
+\end{ocamldocdescription}
+
+
+
+
+Retourne un tablier de case vides
+
+
+
+\label{val:Othello.copy-underscoreboard}\begin{ocamldoccode}
+val copy_board : 'a array array -> 'a array array
+\end{ocamldoccode}
+\index{copy-underscoreboard@\verb`copy_board`}
+\begin{ocamldocdescription}
+Méthode de copie d'un état du tablier
+
+
+\end{ocamldocdescription}
+
+
+
+
+Retrourne une matrice avec les références des nouvelles case
+
+
+
+\label{val:Othello.init-underscoreboard}\begin{ocamldoccode}
+val init_board : cell array array
+\end{ocamldoccode}
+\index{init-underscoreboard@\verb`init_board`}
+\begin{ocamldocdescription}
+Méthode d'initialisation des positions des jetons lors d'une nouvelle partie
+
+
+\end{ocamldocdescription}
+
+
+
+
+Retourne un tablier avec 4 jetons positionés sur les cases D4 E4 D5 E5
 
 
 
@@ -939,6 +1063,11 @@ val make_board : cell array array
 val display_cell : cell array array -> int -> int -> unit
 \end{ocamldoccode}
 \index{display-underscorecell@\verb`display_cell`}
+\begin{ocamldocdescription}
+Méthode d'affichage d'une case
+
+
+\end{ocamldocdescription}
 
 
 
@@ -947,6 +1076,11 @@ val display_cell : cell array array -> int -> int -> unit
 val display_board : cell array array -> unit
 \end{ocamldoccode}
 \index{display-underscoreboard@\verb`display_board`}
+\begin{ocamldocdescription}
+Méthode d'affichage du plateau de jeu
+
+
+\end{ocamldocdescription}
 
 
 
@@ -955,6 +1089,11 @@ val display_board : cell array array -> unit
 val display_message : string -> unit
 \end{ocamldoccode}
 \index{display-underscoremessage@\verb`display_message`}
+\begin{ocamldocdescription}
+Méthode d'affichage des messages
+
+
+\end{ocamldocdescription}
 
 
 
@@ -963,6 +1102,11 @@ val display_message : string -> unit
 val count : 'a array array -> 'a -> int
 \end{ocamldoccode}
 \index{count@\verb`count`}
+\begin{ocamldocdescription}
+Méthode pour compter le nombre de jeton d'une couleur donnée sur un état donné
+
+
+\end{ocamldocdescription}
 
 
 
@@ -971,6 +1115,11 @@ val count : 'a array array -> 'a -> int
 val is_finished : cell array array -> bool
 \end{ocamldoccode}
 \index{is-underscorefinished@\verb`is_finished`}
+\begin{ocamldocdescription}
+Méthode de test de fin de partie
+
+
+\end{ocamldocdescription}
 
 
 
@@ -979,6 +1128,11 @@ val is_finished : cell array array -> bool
 val check_pos : 'a array array -> int -> int -> bool
 \end{ocamldoccode}
 \index{check-underscorepos@\verb`check_pos`}
+\begin{ocamldocdescription}
+Methode de test de position $=$$>$ Vrai si sur le plateau
+
+
+\end{ocamldocdescription}
 
 
 
@@ -987,6 +1141,11 @@ val check_pos : 'a array array -> int -> int -> bool
 val get_opponent : cell -> cell
 \end{ocamldoccode}
 \index{get-underscoreopponent@\verb`get_opponent`}
+\begin{ocamldocdescription}
+Methode de recupération de la couleur de l'adversaire
+
+
+\end{ocamldocdescription}
 
 
 
@@ -995,6 +1154,11 @@ val get_opponent : cell -> cell
 val playable_dir : cell array array -> cell -> int * int -> int * int -> bool
 \end{ocamldoccode}
 \index{playable-underscoredir@\verb`playable_dir`}
+\begin{ocamldocdescription}
+Methode de test de direction légal $=$$>$ Vrai si la direction est légale
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1003,6 +1167,11 @@ val playable_dir : cell array array -> cell -> int * int -> int * int -> bool
 val playable_cell : cell array array -> cell -> int -> int -> bool
 \end{ocamldoccode}
 \index{playable-underscorecell@\verb`playable_cell`}
+\begin{ocamldocdescription}
+Methode de test de coup légal $=$$>$ Vrai si le coup est légal
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1011,6 +1180,11 @@ val playable_cell : cell array array -> cell -> int -> int -> bool
 val play_cell : cell array array -> cell -> int -> int -> unit
 \end{ocamldoccode}
 \index{play-underscorecell@\verb`play_cell`}
+\begin{ocamldocdescription}
+Méthode pour jouer une case
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1021,7 +1195,16 @@ val sim_play_cell :
   cell -> int -> int -> cell array array
 \end{ocamldoccode}
 \index{sim-underscoreplay-underscorecell@\verb`sim_play_cell`}
+\begin{ocamldocdescription}
+Méthode pour simuler le jeu sur une case
 
+
+\end{ocamldocdescription}
+
+
+
+
+Retourne la matrice de références sur les nouvelles positions de jetons
 
 
 
@@ -1029,7 +1212,16 @@ val sim_play_cell :
 val playable_cells : cell array array -> cell -> (int * int) list
 \end{ocamldoccode}
 \index{playable-underscorecells@\verb`playable_cells`}
+\begin{ocamldocdescription}
+Méthode de récupération de la liste des coups jouables
 
+
+\end{ocamldocdescription}
+
+
+
+
+Retourne une liste des coordonnées des coup légaux
 
 
 
@@ -1037,6 +1229,11 @@ val playable_cells : cell array array -> cell -> (int * int) list
 val score : cell array array -> cell -> int
 \end{ocamldoccode}
 \index{score@\verb`score`}
+\begin{ocamldocdescription}
+Methode qui retourne le score pour un état de jeu et un joueur
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1045,6 +1242,11 @@ val score : cell array array -> cell -> int
 val display_scores : cell array array -> unit
 \end{ocamldoccode}
 \index{display-underscorescores@\verb`display_scores`}
+\begin{ocamldocdescription}
+Méthode pour afficher les scores
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1053,7 +1255,17 @@ val display_scores : cell array array -> unit
 val fold_until : ('a -> 'b -> 'a) -> ('a -> bool) -> 'a -> 'b list -> 'a
 \end{ocamldoccode}
 \index{fold-underscoreuntil@\verb`fold_until`}
+\begin{ocamldocdescription}
+Méthode récursive de Fold left sur une liste avec la function {\tt{f}} 
+   jusqu'à que ce que le prédicat {\tt{p}} soit satisfait
 
+
+\end{ocamldocdescription}
+
+
+
+
+Retourne l'accumulateur
 
 
 
@@ -1061,6 +1273,11 @@ val fold_until : ('a -> 'b -> 'a) -> ('a -> bool) -> 'a -> 'b list -> 'a
 val alpha_beta : cell array array -> cell -> int -> int -> int -> int
 \end{ocamldoccode}
 \index{alpha-underscorebeta@\verb`alpha_beta`}
+\begin{ocamldocdescription}
+Méthode récursive de calcul alphabeta des noeuds de l'arbre
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1069,6 +1286,11 @@ val alpha_beta : cell array array -> cell -> int -> int -> int -> int
 val ia_turn : cell array array -> unit
 \end{ocamldoccode}
 \index{ia-underscoreturn@\verb`ia_turn`}
+\begin{ocamldocdescription}
+Methode: Tour de la machine intelligente
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1077,6 +1299,11 @@ val ia_turn : cell array array -> unit
 val rdm_turn : cell array array -> unit
 \end{ocamldoccode}
 \index{rdm-underscoreturn@\verb`rdm_turn`}
+\begin{ocamldocdescription}
+Methode: Tour de la machine aléatoire
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1085,6 +1312,11 @@ val rdm_turn : cell array array -> unit
 val player_turn : cell array array -> unit
 \end{ocamldoccode}
 \index{player-underscoreturn@\verb`player_turn`}
+\begin{ocamldocdescription}
+Methode: Tour du joueur
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1093,6 +1325,11 @@ val player_turn : cell array array -> unit
 val end_message : cell array array -> string
 \end{ocamldoccode}
 \index{end-underscoremessage@\verb`end_message`}
+\begin{ocamldocdescription}
+Méthode d'affichage du message en fin de partie
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1101,6 +1338,11 @@ val end_message : cell array array -> string
 val continue : unit -> bool
 \end{ocamldoccode}
 \index{continue@\verb`continue`}
+\begin{ocamldocdescription}
+Méthode d'attente d'un évenement click de souris
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1109,6 +1351,11 @@ val continue : unit -> bool
 val game : unit -> unit -> unit
 \end{ocamldoccode}
 \index{game@\verb`game`}
+\begin{ocamldocdescription}
+Methode de définition d'une partie
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1117,6 +1364,11 @@ val game : unit -> unit -> unit
 val speclist : (string * Arg.spec * string) list
 \end{ocamldoccode}
 \index{speclist@\verb`speclist`}
+\begin{ocamldocdescription}
+Définition des spécifications et des arguments possibles
+
+
+\end{ocamldocdescription}
 
 
 
@@ -1125,6 +1377,12 @@ val speclist : (string * Arg.spec * string) list
 val main : unit -> unit -> unit
 \end{ocamldoccode}
 \index{main@\verb`main`}
+\begin{ocamldocdescription}
+Définition de la function prinicipale
 
 
+\end{ocamldocdescription}
+
+
+\end{document}
 \end{document}
