@@ -271,8 +271,7 @@ let play_cell board c x y =
       )
       directions										(* Liste des directions possibles  *)
   ); 
-  board.(x).(y) <- c
-							(* Prise de la case cliquée *)
+  board.(x).(y) <- c                                (* Prise de la case cliquée *)
 ;;
 
 (** Méthode pour simuler le jeu sur une case *)

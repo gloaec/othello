@@ -2,6 +2,7 @@
 
 \usepackage{xcolor}
 \usepackage[T1]{fontenc}
+\usepackage{tabularx}
 \usepackage{palatino}
 \usepackage{courier}
 \usepackage{alltt}
@@ -11,6 +12,7 @@
 \usepackage{float} 
 \usepackage{url} 
 \usepackage{ocamldoc}
+\usepackage{algorithm}
 \usepackage{amsmath,amssymb,graphicx,enumerate,calc,ifthen}
 
 
@@ -101,34 +103,9 @@
 
 {\tableofcontents}
 
-\section*{Liste de figures}
+{\listoffigures}
 
-\begin{tmparsep}{0em}
-  {\small Position de départ ~\pageref{auto-4}
-  
-  Capture de jetons ~\pageref{auto-5}
-  
-  Une partie de l'arbre de jeu de Othello ~\pageref{auto-9}
-  
-  Exemple de déroulement de l'algorithme Minimax ~\pageref{auto-12}
-  
-  Exemple de déroulement du Minimax à profondeur limitée avec d=1
-  ~\pageref{auto-15}
-  
-  Exemple de déroulement du Minimax à profondeur limitée avec d=2
-  ~\pageref{auto-16}
-  
-  Exemples de coupures alpha et beta ~\pageref{auto-18}
-  
-  Exemple de déroulement de l'algorithme minimax alpha-beta avec d = 2
-  ~\pageref{auto-19}}
-\end{tmparsep}
-
-\section*{Liste de tableaux}
-
-\begin{tmparsep}{0em}
-  {\small Exemple de valeurs tactiques pour Othello ~\pageref{auto-10}}
-\end{tmparsep}
+{\listoftables}
 
 \section{Introduction}
 
@@ -178,7 +155,8 @@ E5 et deux noirs sur les cases E4 et D5.
 
 \begin{figure}[h]
   \caption{Position de départ}
-  \resizebox{5cm}{5cm}{
+  
+    \noindent\makebox[\textwidth]{
     \centering
     \includegraphics[scale=1]{images/board_start.jpg}
   }  
@@ -199,12 +177,10 @@ capturés.
 
 \begin{figure}[h]
   \caption {Capture de jetons}
-  \begin{flushleft}
-  \resizebox{!}{5cm}{
+  \noindent\makebox[\textwidth]{
     \centering
-    \includegraphics[scale=1]{images/board_capture.png} 
+    \includegraphics[width=\textwidth]{images/board_capture.png} 
   }
-  \end{flushleft}
 \end{figure}
 
 Dans cet exemple on peut voir que le jour blanc peut mettre son jeton dans la
@@ -285,9 +261,9 @@ l'arbre de jeu Othello engendré à partir de l'état initial.
 
 \begin{figure}[h]
   \caption {Une partie de l'arbre de jeu de Othello}
-  \resizebox{13.5cm}{!}{
+  \noindent\makebox[\textwidth]{
     \centering
-    \includegraphics[scale=1]{images/playing_tree.png} 
+    \includegraphics[width=\textwidth]{images/playing_tree.png} 
   }
 \end{figure}
 
@@ -307,6 +283,7 @@ d'évaluation plus performante. Le tableau qui suit représente une
 matrice de valeurs tactiques en début de partie.
 
 \begin{table}[h]
+  \noindent\makebox[\textwidth]{
   \begin{tabular}{|c|c|c|c|c|c|c|c|}
     \hline
     500  & -150  &  30  &  10  &  10  &  30  & -150  &  500 \\
@@ -326,6 +303,7 @@ matrice de valeurs tactiques en début de partie.
     500 & -150 & 30 & 10 & 10 & 30 & -150 & 500\\
     \hline
   \end{tabular}
+  }
   \caption{Exemple de valeurs tactiques pour Othello}
 \end{table}
 
@@ -387,7 +365,35 @@ comme suit :
 
 {\noindent}{\noindent}
 \begin{tabular}{l}
+{\algorithm{\tmtextbf{Fonction} Minimax (e)
 
+\tmtextbf{Entr{\'e}es :} noeud e,
+
+\tmtextbf{Sorties : }Valeur Minimax du noeud e
+
+
+
+\tmtextbf{Debut}
+
+\tmtextbf{ \ \ \ \ \ \ \ Si} final ?(e) \tmtextbf{alors}
+
+\ \ \ \ \ \ \ \ \ \ \ Return h(e)
+
+\tmtextbf{ \ \ \ \ \ \ \ Sinon}
+
+\tmtextbf{ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Si} joueur ?(e) alors
+
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Return max\{Minimax(ei)\}
+
+\ \ \ \ \ \ \ \tmtextbf{ \ \ \ \ \ \ \ Sinon} return min\{Minimax(ei)\}
+
+\tmtextbf{ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Finsi
+
+\ \ \ \ \ \ \ Finsi
+
+Fin}
+
+}}
 \end{tabular}{\hspace*{\fill}}{\smallskip}
 
 La figure 4 explique sur un exemple a deux niveaux le déroulement de
@@ -398,9 +404,9 @@ gain le plus sûr.
 
 \begin{figure}[h]
   \caption {Exemple de déroulement de l'algorithme Minimax}
-  \resizebox{13.5cm}{!}{
+  \noindent\makebox[\textwidth]{
     \centering
-    \includegraphics[scale=1]{images/minimax_example.png} 
+    \includegraphics[width=\textwidth]{images/minimax_example.png} 
   }
 \end{figure}
 
@@ -452,9 +458,9 @@ déroulement de l'algorithme Minimax à profondeur limitée avec d=1.
 
 \begin{figure}[h]
   \caption {Exemple de déroulement du Minimax à profondeur limitée avec d=1}
-  \resizebox{13.5cm}{!}{
+  \noindent\makebox[\textwidth]{
     \centering
-    \includegraphics[scale=1]{images/minimax_d1_example.png} 
+    \includegraphics[width=\textwidth]{images/minimax_d1_example.png} 
   }
 \end{figure}
 
@@ -472,9 +478,9 @@ un score de 1. Il sera donc préféré.
 
 \begin{figure}[h]
   \caption {Exemple de déroulement du Minimax à profondeur limitée avec d=2}
-  \resizebox{13.5cm}{!}{
+  \noindent\makebox[\textwidth]{
     \centering
-    \includegraphics[scale=1]{images/minimax_d2_example.png}
+    \includegraphics[width=\textwidth]{images/minimax_d2_example.png}
   }
 \end{figure}
 
@@ -535,9 +541,9 @@ beta-coupure intervient dans un noeud joueur (MAX) lorsque sa alpha-valeur est s
 
 \begin{figure}[h]
   \caption {Exemples de coupures alpha et beta}
-  \resizebox{15cm}{!}{
+  \noindent\makebox[\textwidth]{
     \centering
-    \includegraphics[scale=1]{images/minimax_ab_example.png}
+    \includegraphics[width=\textwidth]{images/minimax_ab_example.png}
   }
 \end{figure}
 
@@ -551,9 +557,8 @@ minimax avec élagage alpha beta sur l'arbre de jeu vu dans la figure 6.
 
 \begin{figure}[h]
   \caption {Exemple de déroulement de l'algorithme minimax alpha-beta avec d = 2}
-  \resizebox{390pt}{!}{
-    \centering
-    \includegraphics[scale=1]{images/minimax_ab_example.png}
+  \noindent\makebox[\textwidth]{
+    \includegraphics[width=\textwidth]{images/minimax_ab_example.png}
   }
 \end{figure}
 
@@ -644,9 +649,9 @@ Les options par défaut de l'application sont :
 }
 \end{figure}
 
-\subsection{Algorithmes intéressants}
+\subsection{Algorithmes notables}
 
-\subsubsection{Direction Légale}
+\subsubsection{Direction légale}
 
 Methode de test de direction légal => Vrai si la direction est légale
 
