@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 (** Othello application using Minimax Alpha Beta algorithm to compute the moves of the artificial intelligence. *)
 (** Authors: Ghislain Loaec - Abjel Djalil Ramoul *)
 (*******************************************************************)
@@ -73,61 +72,6 @@ let init_board =
 let display_cell board x y =
 	
   (** Construction d'un carré de couleur *)	
-=======
-
-(* Largeur des cases *)
-let cell_size = ref 75 
-
-(* Couleur du fond *)
-let bg_r = ref 50
-let bg_g = ref 150
-let bg_b = ref 50
-
-(* Taille de la grille *)
-let size = ref 8
-
-(* Utilisation de l'interlligence artificielle *)
-let ia = ref true
-
-(* Profondeur d'exploration de l'arbre de coups jouables *)
-let depth = ref 4
-
-(* Valeurs possibles des cases *)
-type cell = White | Black | Empty
-
-(* Déclaration du type de plateau = tableau de cases à 2 dimensions *)
-type board = (cell array) array
-
-type coord = (int * int)
-type coord_list = coord list
-
-(* Méthode de construction du plateau *)
-let make_othello_board = Array.make_matrix !size !size Empty
-(*Array.init !size (fun y ->			(* Plateau = 8x8 cases par default *)
-  Array.init !size (fun x -> Empty) 	(* Initialisation avec des cases vides *)
-*)
-;;
-
-let copy_board board = 
-Array.init !size (fun y ->				(* Plateau = 8x8 cases par default *)
-  Array.init !size (fun x -> board.(y).(x)) 	(* Initialisation avec des cases vides *)
-)
-
-(* Méthode d'Initialisation d'une partie avec les jetons *)
-let make_board = 
-let board = make_othello_board in
-board.((Array.length board) / 2 - 1).((Array.length board) / 2 - 1) <- White;	(* 1ier jeton Blanc *)
-board.((Array.length board) / 2 + 0).((Array.length board) / 2 + 0) <- White;	(* 2nd jeton Blanc *)
-board.((Array.length board) / 2 + 0).((Array.length board) / 2 - 1) <- Black;	(* 1ier jeton Noir *)
-board.((Array.length board) / 2 - 1).((Array.length board) / 2 + 0) <- Black;	(* 2nd jeton Noir *)
-board
-;;
-
-(* Méthode d'affichage d'une case *)
-let display_cell board x y =
-	
-  (* Construction d'un carré de couleur *)	
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
   Graphics.set_color (Graphics.rgb !bg_r !bg_g !bg_b);
   Graphics.fill_rect
   (y * !cell_size + 1)
@@ -135,11 +79,7 @@ let display_cell board x y =
   (!cell_size - 2)
   (!cell_size - 2);
 
-<<<<<<< HEAD
   (** Construction de la bordure du carré *)	
-=======
-  (* Construction de la bordure du carré *)	
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
   Graphics.set_color (Graphics.rgb 0 70 0);
   Graphics.draw_rect 
   (y * !cell_size)
@@ -147,11 +87,7 @@ let display_cell board x y =
   (y + !cell_size - y) 
   (x + !cell_size - x);
 
-<<<<<<< HEAD
   (** Définition de la couleur du jeton sur la case *)
-=======
-  (* Définition de la couleur du jeton sur la case *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
   Graphics.set_color 
   (
 	match board.(y).(x) with 
@@ -159,54 +95,37 @@ let display_cell board x y =
     | _ 	-> Graphics.white
   );
 
-<<<<<<< HEAD
   (** Construction du jeton si la case n'est pas vide *)
   if (not (board.(y).(x) = Empty)) then
   (
 	(** Construction d'un cercle de couleur éxtérieur *)
-=======
-  (* Construction du jeton si la case n'est pas vide *)
-  if (not (board.(y).(x) = Empty)) then
-  (
-	(* Construction d'un cercle de couleur *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
     Graphics.fill_circle
     (y * !cell_size + !cell_size/2) 
     (x * !cell_size + !cell_size/2) 
     (!cell_size / 2 - 2);
 
-	(* Construction de la bordure du cercle *)
+	(** Construction de la bordure du cercle *)
     Graphics.set_color (Graphics.rgb 100 100 100);
     Graphics.draw_circle 
     (y * !cell_size + !cell_size/2) 
     (x * !cell_size + !cell_size/2) 
     (!cell_size / 2 - 2);    
 
-<<<<<<< HEAD
   	(** Définition de la couleur du jeton sur la case *)
-=======
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 	Graphics.set_color 
 	  (
 		match board.(y).(x) with 
 	    | Black -> Graphics.rgb 50 50 50
 	    | _ 	-> Graphics.rgb 200 200 200
 	  );
-	
-<<<<<<< HEAD
-	(* Construction d'un cercle de couleur intérieur *)
-=======
-	(* Construction d'un cercle de couleur *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
+
+	(** Construction d'un cercle de couleur intérieur *)
     Graphics.fill_circle
     (y * !cell_size + !cell_size/2) 
     (x * !cell_size + !cell_size/2) 
     (!cell_size / 2 - 5);
 
-<<<<<<< HEAD
 	(* Construction de la bordure du cercle *)
-=======
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
     Graphics.set_color (Graphics.rgb 100 100 100);
     Graphics.draw_circle 
     (y * !cell_size + !cell_size/2) 
@@ -215,11 +134,7 @@ let display_cell board x y =
   )
 ;;
 
-<<<<<<< HEAD
 (** Méthode d'affichage du plateau de jeu *)
-=======
-(* Méthode d'affichage du plateau de jeu *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let display_board board =
   Graphics.open_graph
   (
@@ -228,11 +143,8 @@ let display_board board =
     (!cell_size * Array.length board.(0)+1)
     (45 + !cell_size * Array.length board.(0))
   );
-<<<<<<< HEAD
 
   (** Affichage de la zone supérieure *)
-=======
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
   Graphics.set_color (Graphics.rgb 145 80 30);
   Graphics.fill_rect
   0
@@ -240,11 +152,7 @@ let display_board board =
   (Graphics.size_x())
   (Graphics.size_y());
   
-<<<<<<< HEAD
   (** Affichage des cases de jeu *)
-=======
-  (* Affichage des cases de jeu *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
   for i=0 to Array.length board-1 do	
   	for j=0 to Array.length board.(i)-1 do
   	  display_cell board i j;
@@ -252,11 +160,7 @@ let display_board board =
   done;
 ;;
 
-<<<<<<< HEAD
 (** Méthode d'affichage des messages *)
-=======
-(* Méthode d'affichage des messages *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let display_message message =
   Graphics.moveto 5 (Graphics.size_y()-18);
   Graphics.set_color Graphics.white;
@@ -266,11 +170,7 @@ let display_message message =
   in  Graphics.draw_string (iastring ^ message)
 ;;
 
-<<<<<<< HEAD
 (** Méthode pour compter le nombre de jeton d'une couleur donnée sur un état donné *)
-=======
-(* Méthode pour compter le nombre de jeton d'une couleur donnée sur un état donné *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let count board c = 
   let res = ref 0 in
     for i = 0 to (Array.length board) - 1 do
@@ -281,11 +181,7 @@ let count board c =
     !res
 ;;
 
-<<<<<<< HEAD
 (** Méthode de test de fin de partie *)
-=======
-(* Méthode de test de fin de partie *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let is_finished board = 
   let finished = ref true in
   for i=0 to Array.length board-1 do
@@ -296,11 +192,7 @@ let is_finished board =
   !finished || (count board White = 0) || (count board Black = 0)
 ;;
 
-<<<<<<< HEAD
 (** Methode de test de position => Vrai si sur le plateau *)
-=======
-(* Methode de test de position => Vrai si sur le plateau *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let check_pos board x y =
   x >= 0 && 
   y >= 0 && 
@@ -308,22 +200,14 @@ let check_pos board x y =
   x < Array.length board.(0)
 ;;
 
-<<<<<<< HEAD
 (** Methode de recupération de la couleur de l'adversaire *)
-=======
-(* Methode de recupération de la couleur de l'adversaire *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let get_opponent c =
   match c with
   | White -> Black
   | _ -> White
 ;;
 
-<<<<<<< HEAD
 (** Methode de test de direction légal => Vrai si la direction est légale *)
-=======
-(* Methode de test de direction légal => Vrai si la direction est légale *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let playable_dir board c (x, y) (dx, dy) =
   let rec playable_dir_rec (x, y) valid = 
     if not (check_pos board x y) then 				(* Test si la position est sur le plateau *)
@@ -340,11 +224,7 @@ let playable_dir board c (x, y) (dx, dy) =
     in playable_dir_rec (x + dx, y + dy) false		(* Test du premier jeton de la direction donnée *)
 ;;
 
-<<<<<<< HEAD
 (** Methode de test de coup légal => Vrai si le coup est légal *)
-=======
-(* Methode de test de coup légal => Vrai si le coup est légal *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let playable_cell board c x y =
   if not (check_pos board x y) then					(* Test si la position est sur le plateau *)
     false											  (* Hors du plateau => direction non autorisée *)
@@ -369,11 +249,7 @@ let playable_cell board c x y =
   )
 ;;
 
-<<<<<<< HEAD
 (** Méthode pour jouer une case *)
-=======
-(* Méthode pour jouer une case *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let play_cell board c x y =
   let directions = [ 								(* Définition des directions possibles de la case cliquée *)
     (-1, -1); (-1, 0); (-1, 1); 
@@ -395,22 +271,21 @@ let play_cell board c x y =
       )
       directions										(* Liste des directions possibles  *)
   ); 
-<<<<<<< HEAD
   board.(x).(y) <- c                                (* Prise de la case cliquée *)
+;;
+
+let display_taken board x y =
+	(** Construction de la bordure du cercle *)
+    Graphics.set_color (Graphics.rgb 0 255 0);
+    Graphics.draw_circle 
+    (y * !cell_size + !cell_size/2) 
+    (x * !cell_size + !cell_size/2) 
+    (!cell_size / 2 - 2);	
 ;;
 
 (** Méthode pour simuler le jeu sur une case *)
 let sim_play_cell board c x y =
   let sim_board = (copy_board board) in				(* Copie de l'état de la board *)
-=======
-  board.(x).(y) <- c
-							(* Prise de la case cliquée *)
-;;
-
-(* Méthode pour simuler le jeu sur une case *)
-let sim_play_cell board c x y =
-  let sim_board = (copy_board board) in				(* Copy de l'état de la board *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
   let directions = [ 								(* Définition des directions possibles de la case cliquée *)
     (-1, -1); (-1, 0); (-1, 1); 
     (0 , -1); (* X *)  (0 , 1); 
@@ -425,6 +300,7 @@ let sim_play_cell board c x y =
             if (check_pos sim_board x y) then				    (* Test si la position est sur le plateau *)
             if (sim_board.(x).(y) = opponent) then (			(* Test si le jeton est à l'adversaire *)
               sim_board.(x).(y) <- c; 							  (* Prise du jeton *)
+			  display_taken board x y;
               take (x + dx, y + dy)							  (* Tentative de prise du prochain jeton dans la direction donnée *)
             )
           in take (x + dx, y + dy)						  (* Tentative de prise du premier jeton dans la direction donnée *)
@@ -434,14 +310,9 @@ let sim_play_cell board c x y =
   sim_board.(x).(y) <- c;
   sim_board
 ;;
-<<<<<<< HEAD
 (** Retourne la matrice de références sur les nouvelles positions de jetons *)
 
 (** Méthode de récupération de la liste des coups jouables *)
-=======
-
-(* Méthode de récupération de la liste des coups jouables *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let playable_cells board c = 
   let cells = ref [] in
   for i = 0 to (Array.length board) - 1 do
@@ -472,25 +343,16 @@ let playable_cells board c =
   done;
   !cells 
 ;;
-<<<<<<< HEAD
 (** Retourne une liste des coordonnées des coup légaux *)
 
 (** Methode qui retourne le score pour un état de jeu et un joueur *)
-=======
-
-(* Methode qui retourne le score pour un état de de jeu et un joueur *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let score board c =
   match c with
   | White -> (count board White) - (count board Black)
   | _ -> (count board Black) - (count board White)
 ;;
 
-<<<<<<< HEAD
 (** Méthode pour afficher les scores *)
-=======
-(* Méthode pour afficher les scores *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let display_scores board =
   let whites = (count board White)
   and blacks = (count board Black) in
@@ -533,11 +395,7 @@ let display_scores board =
     Graphics.draw_string (string_of_int whites);
 ;;
 
-<<<<<<< HEAD
 (** Méthode récursive de Fold left sur une liste avec la function [f] 
-=======
-(* Méthode récursive de Fold left sur une liste avec la function [f] 
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
    jusqu'à que ce que le prédicat [p] soit satisfait *)
 let rec fold_until f p acc l = 
   match l with
@@ -545,18 +403,11 @@ let rec fold_until f p acc l =
   | t :: q -> fold_until f p (f acc t) q
   | [] -> acc
 ;;
-<<<<<<< HEAD
 (** Retourne l'accumulateur *)
 
 (** Méthode récursive de calcul alphabeta des noeuds de l'arbre *)
 let rec alpha_beta board c d a b =
   if (is_finished board or d = 0) then
-=======
-
-(* Méthode récursive de calcul alphabeta des noeuds de l'arbre *)
-let rec alpha_beta board c d a b =
-  if (is_finished board or d = 0) then 
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 	score board White
   else let playable_cells = playable_cells board c in 
     match c with
@@ -584,11 +435,7 @@ let rec alpha_beta board c d a b =
 		  playable_cells
 ;;
 
-<<<<<<< HEAD
 (** Methode: Tour de la machine intelligente *)
-=======
-(* Methode: Tour de la machine intelligente *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let ia_turn board = 
   let playable_cells = playable_cells board White in 
 	match (List.length playable_cells) with
@@ -609,11 +456,7 @@ let ia_turn board =
       in play_cell board White x y)
 ;;
 
-<<<<<<< HEAD
 (** Methode: Tour de la machine aléatoire *)
-=======
-(* Methode: Tour de la machine aléatoire *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let rec rdm_turn board = 
   let x = Random.int (Array.length board) in
   let y = Random.int (Array.length board.(0)) in
@@ -626,11 +469,7 @@ let rec rdm_turn board =
   | _ -> rdm_turn board
 ;;
 
-<<<<<<< HEAD
 (** Methode: Tour du joueur *)
-=======
-(* Methode: Tour du joueur *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let player_turn board =	
   let playable_cells = playable_cells board Black in 
 	match (List.length playable_cells) with
@@ -647,11 +486,7 @@ let player_turn board =
        in player_turn_rec ()											  (* Au joueur de jouer *)
 ;;
 
-<<<<<<< HEAD
 (** Méthode d'affichage du message en fin de partie *)
-=======
-(* Méthode d'affichage du message en fin de partie *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let end_message board = 
   let whites = (count board White) 
   and total = ((Array.length board) * (Array.length board.(0))) in
@@ -664,25 +499,15 @@ else
   "Draw !"
 ;;
 
-<<<<<<< HEAD
 (** Méthode d'attente d'un évenement click de souris *)
-=======
-(* Méthode d'attente d'un évenement click de souris *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let continue() =
 let st = (Graphics.wait_next_event [Graphics.Button_down]) in 
 st.Graphics.button <> true
 ;;
 
-<<<<<<< HEAD
 (** Methode de définition d'une partie *)
 let game ()=
 let board = ref init_board in
-=======
-(* Methode de définition d'une partie *)
-let game ()=
-let board = ref make_board in
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 
 display_board !board;
 display_scores !board;
@@ -707,11 +532,7 @@ done;
 Graphics.close_graph
 ;;
 
-<<<<<<< HEAD
 (** Définition des spécifications et des arguments possibles *)
-=======
-(* Définition des spécifications et des arguments possibles *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let speclist = [
 ("-cellsize", Arg.Int (fun s -> cell_size := s), "<int> : Set cell size in pixels");
 ("-size", Arg.Int (fun s -> size := s), "<int> : Set Board length");
@@ -723,11 +544,7 @@ let speclist = [
   Arg.Int (fun b -> bg_b := b)], "<int> <int> <int> : set background (RGB)");
 ]
 
-<<<<<<< HEAD
 (** Définition de la function prinicipale *)
-=======
-(* Définition de la function prinicipale *)
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 let main () =
   (Arg.parse
     speclist
@@ -736,8 +553,5 @@ let main () =
   game()
 ;;
 
-<<<<<<< HEAD
 (** Lance le jeu *)
-=======
->>>>>>> 78e4f2d9c45670a340a86ab0796aa388a9ec6847
 main();
