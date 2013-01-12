@@ -41,7 +41,7 @@
 \newcommand{\mlcodeline}[2]{\tiny\sl #1 & \begin{minipage}[c]{0.8\linewidth}\begin{alltt}\mbox{#2}\end{alltt}\end{minipage}\\}
 % ---------------------------------------------------------------------
 
-\floatstyle{boxed} 
+%\floatstyle{boxed} 
 \restylefloat{figure}
 
 %%%%%%%%%% Start TeXmacs macros
@@ -75,10 +75,15 @@
   \end{minipage}}
 %%%%%%%%%% End TeXmacs macros
 
+\newcommand{\algorithmicoutput}{\textbf{Sortie:}}
+\newcommand{\Output}{\item[\algorithmicoutput]}
+
 \begin{document}
 
+\begin{titlepage}
 \begin{center}
-  \begin{tmparsep}{0.25em}
+
+{\Large 
     Université de Bourgogne
     
     1ère année de Master Informatique STIC
@@ -86,10 +91,10 @@
     Parcours Informatique
     
     Algorithme et complexité
-  \end{tmparsep}
-  
-  Le Jeu Othello
-  
+}
+\\[1.5cm]
+  \textsc{\Huge Jeu Othello}
+\\[1.5cm]  
   Ghislain Loaec - Abdeldjalil Ramoul
   
   2012-2013
@@ -101,12 +106,15 @@
 \end{abstract}
 
 
+\end{titlepage}
 
 {\tableofcontents}
 
 {\listoffigures}
 
 {\listoftables}
+
+{\listofalgorithms}
 
 \section{Introduction}
 
@@ -364,39 +372,29 @@ comme suit :
   Adversaire \ \ (étape min)}
 \end{itemizedot}
 
-{\noindent}{\noindent}
-\begin{tabular}{l}
-{\algorithm{
-\tmtextbf{Fonction} Minimax (e)
-
-\tmtextbf{Entr{\'e}es :} noeud e,
-
-\tmtextbf{Sorties : }Valeur Minimax du noeud e
 
 
+\begin{algorithm}
+  \caption{Algorithme Minimax}
 
-\tmtextbf{Debut}
+  \begin{algorithmic}
+  	\Statex\Require{Noeud e}
+  	\Output{Valeur Minimax du noeud e}
+    \Function{Minimax}{e}
+      \If{final ?(e)}
+        \Return h(e)
+      \Else
+        \If{joueur ?(e)}
+	      \Return $max{Minimax(ei) \mid ei \in f(e)}$
+	    \Else 
+	      \Return $min{Minimax(ei) \mid ei \in f(e)}$
+	    \EndIf
+	  \EndIf
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
-\tmtextbf{ \ \ \ \ \ \ \ Si} final ?(e) \tmtextbf{alors}
 
-\ \ \ \ \ \ \ \ \ \ \ Return h(e)
-
-\tmtextbf{ \ \ \ \ \ \ \ Sinon}
-
-\tmtextbf{ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Si} joueur ?(e) alors
-
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Return max\{Minimax(ei)\}
-
-\ \ \ \ \ \ \ \tmtextbf{ \ \ \ \ \ \ \ Sinon} return min\{Minimax(ei)\}
-
-\tmtextbf{ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Finsi
-
-\ \ \ \ \ \ \ Finsi
-
-Fin}
-
-}}
-\end{tabular}{\hspace*{\fill}}{\smallskip}
 
 La figure 4 explique sur un exemple a deux niveaux le déroulement de
 l'algorithme du minimax. On peut voir que la racine ne contient pas le gain le
@@ -404,7 +402,7 @@ plus élevé mais plutôt le maximum des pertes minimales. Donc
 l'algorithme ne cherche pas le score le plus élevé mais plutôt le
 gain le plus sûr.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \caption {Exemple de déroulement de l'algorithme Minimax}
   \noindent\makebox[\textwidth]{
     \centering
@@ -448,9 +446,26 @@ principe de cette variante est de :
   \item Propager ces valeurs jusqu'aux noeuds non terminaux.
 \end{itemizedot}}
 
-{\noindent}{\noindent}\begin{tabular}{l}
+\begin{algorithm}
+  \caption{Algorithme Minimax à profondeur limitée}
 
-\end{tabular}{\hspace*{\fill}}{\smallskip}
+  \begin{algorithmic}
+  	\Statex\Require{Noeud e, Profondeur d}
+  	\Output{Valeur Minimax du noeud e}
+    \Function{Minimax}{e, d}
+      \If{final ?(e) ou (d == 0)}
+        \Return h(e)
+      \Else
+        \If{joueur ?(e)}
+	      \Return $max{Minimax(ei, d-1) \mid ei \in f(e)}$
+	    \Else 
+	      \Return $min{Minimax(ei, d-1) \mid ei \in f(e)}$
+	    \EndIf
+	  \EndIf
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
 
 {\tmstrong{Limites de l'algorithme Minimax à profondeur limitée}}
 
@@ -549,9 +564,35 @@ beta-coupure intervient dans un noeud joueur (MAX) lorsque sa alpha-valeur est s
   }
 \end{figure}
 
-{\noindent}{\noindent}\begin{tabular}{l}
- 
-\end{tabular}{\hspace*{\fill}}{\smallskip}
+\begin{algorithm}
+  \caption{Algorithme Minimax avec élagage $\alpha \beta$}
+
+  \begin{algorithmic}
+  	\Statex\Require{Noeud e, Profondeur d, Alpha $\alpha$, Beta $\beta$}
+  	\Output{Valeur Minimax du noeud e}
+    \Function{Minimax}{e, d, }
+      \If{final ?(e) ou (d == 0)}
+        \Return h(e)
+      \Else
+        \If{joueur ?(e)}
+          \State $v = -\infty$
+          \For{$fi \in f(e)$}
+            \State $v = max(v, Minimax(fi, d-1, \alpha, \beta))$
+            \If{$v > \beta$} \Return v \EndIf
+            \State $\alpha = max(\alpha, v)$
+          \EndFor
+	    \Else 
+          \State $v = +\infty$
+          \ForAll{$fi \in f(e)$}
+            \State $v = min(v, Minimax(fi, d-1, \alpha, \beta))$
+            \If{$v > \alpha$} \Return v \EndIf
+            \State $\beta = min(\beta, v)$
+          \EndFor
+	    \EndIf
+	  \EndIf
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
 Dans la figure suivante nous observons l'exécution de l'algorithme du
 minimax avec élagage alpha beta sur l'arbre de jeu vu dans la figure 6.
@@ -655,13 +696,13 @@ Les options par défaut de l'application sont :
 
 \subsubsection{Direction légale}
 
-Methode de test de direction légal => Vrai si la direction est légale
+Cette méthode permet de déterminer si une direction de jeu est légale. À partir d'un case donnée, l'algorithme récursif initie la direction comme illégale. En regardant le premier voisin dans la direction donnée, la case doit contenir impérativement un jeton du joueur opposé. L'itération récursive continue alors en indiquant grâce à un booléen qu'au moins un jeton de l'adversaire est dans l'alignement. Lorsqu'un jeton de couleur de joueur est identifié, l'algorithme s'arrête et la direction est jouable. Si une case vide est rencontrée, la direction n'est pas légale.
 
 \begin{figure}[H]
 \caption{Direction légale}
 {\scriptsize\noindent
 \begin{longtable}{r|l}
-\mlcodeline{1}{\mlcomments{(*~Methode~de~test~de~direction~légal~{=>\mbox{}}~Vrai~si~la~direction~est~légale~*)}
+\mlcodeline{1}{\mlcomments{(*~Methode~de~test~de~direction~légale~*)}
 }
 \mlcodeline{2}{\mlkeywordA{let}~playable\_{}dir~board~c~(x\mloperator{\mbox{,}}~y)~(dx\mloperator{\mbox{,}}~dy)~\mlkeyword{=}
 }
@@ -698,6 +739,8 @@ Methode de test de direction légal => Vrai si la direction est légale
 
 
 \subsubsection{Coup Légal}
+
+Afin de déterminer si un coup est légal, cet algorithme va tester si parmi les 8 directions possibles de capture, au moins l'une d'être est jouable. Pour ce faire et à partir de la liste des directions donnée, un fold-left testera chacune d'entre elles et comparera leur légalité grâce a un simple prédicat. Nous aurions pu optimiser légèrement cette function en utilisant notre fonction 'fold-until' décrit dans la section 'Implémentation Minimax Alpha Beta' et stopper le test des directions à partir du moment où l'une d'entre elle est légale.
 
 \begin{figure}[H]
 \caption{Coup légal}
@@ -755,6 +798,8 @@ Methode de test de direction légal => Vrai si la direction est légale
 \end{figure}
 
 \subsubsection{Simulation de jeu}
+
+Cette méthode permet la simulation d'un coup joué. Tout premièrement, l'algorithme va copier l'état du tablier et la position des jeton. Le tableau contenant uniquement des références sur jetons (type cell), il nous est impossible de copier le tableau via un Array.copy par example, puisque les références copiées pointerons toujours sur les même objets de case. Nous  utiliserons donc une fonction customisée de copy de tableau. L'algorithme récursif de capture des jetons est très similaire à celle vu précédemment. La fonction retourne le plateau de jeu à l'état suivant le coup simulé.
 
 \begin{figure}[H]
 \caption{Simuler un coup}
@@ -817,6 +862,191 @@ Methode de test de direction légal => Vrai si la direction est légale
 
 
 \subsubsection{Algorimthe Minimax \tmem{Alpha Beta}}
+
+Dans une premier temps, le langage OCAML ne permettant pas d'interrompre l'éxecution d'une boucle directement via des instructions telles que 'break','return', nous avons du créér une fonction récursive (figure 15) permettant d'itérer à travers une liste d'élément en intégrant un accumulateur et un callback. L'itération s'arrêtera lorsqu'un prédicat [p] sur l'accumulateur sera validé.
+
+\begin{figure}[h]
+\caption{Fonction récursive fold\_until}
+{\scriptsize\noindent\begin{longtable}{r|l}
+\mlcodeline{1}{\mlcomments{(**~Méthode~récursive~de~Fold~left~sur~une~liste~avec~la~{function}~{[}f{]}~
+}}
+\mlcodeline{2}{\mlcomments{~~~jusqu'à~que~ce~que~le~prédicat~{[}p{]}~soit~satisfait~*)}
+}
+\mlcodeline{3}{\mlkeywordA{let~rec}~fold\_{}until~f~p~acc~l~\mlkeyword{=}~
+}
+\mlcodeline{4}{~~\mlkeyword{match}~l~\mlkeyword{with}
+}
+\mlcodeline{5}{~~\mloperator{|}~t~\mloperator{\mbox{\COLON}\mbox{\COLON}}~q~\mlkeyword{when}~p~acc~\mlkeyword{->}~acc				
+}
+\mlcodeline{6}{~~\mloperator{|}~t~\mloperator{\mbox{\COLON}\mbox{\COLON}}~q~\mlkeyword{->}~fold\_{}until~f~p~(f~acc~t)~q
+}
+\mlcodeline{7}{~~\mloperator{|}~\mloperator{[}\mloperator{]}~\mlkeyword{->}~acc
+}
+\mlcodeline{8}{\mloperator{\mbox{\SC}\mbox{\SC}}
+}
+\mlcodeline{9}{\mlcomments{(**~Retourne~l'accumulateur~*)}}
+\end{longtable}
+}
+\end{figure}
+
+Nous pourrons alors facilement implémenter l'algorithme Minimax $\alpha \beta$ détaillé précédemment.
+
+\begin{figure}[H]
+\caption{Implémentation de l'algorithme minimax $\alpha \beta$}
+{\scriptsize\noindent\begin{longtable}{r|l}
+\mlcodeline{1}{\mlcomments{(**~Méthode~récursive~de~calcul~alphabeta~des~noeuds~de~l'arbre~*)}
+}
+\mlcodeline{2}{\mlkeywordA{let~rec}~alpha\_{}beta~board~c~d~a~b~\mlkeyword{=}
+}
+\mlcodeline{3}{~~\mlkeyword{if}~(is\_{}finished~board~\mlkeyword{or}~d~\mlkeyword{=}~0)~\mlkeyword{then}
+}
+\mlcodeline{4}{~~~~score~board~White
+}
+\mlcodeline{5}{~~\mlkeyword{else}~\mlkeywordA{let}~playable\_{}cells~\mlkeyword{=}~playable\_{}cells~board~c~\mlkeywordA{in}~
+}
+\mlcodeline{6}{~~~~\mlkeyword{match}~c~\mlkeyword{with}
+}
+\mlcodeline{7}{~~~~\mloperator{|}~White~\mlkeyword{->}~\mlkeywordA{let}~a2~\mlkeyword{=}~ref~a~\mlkeywordA{in}
+}
+\mlcodeline{8}{~~~~~~~~fold\_{}until~
+}
+\mlcodeline{9}{~~~~~~~~~~(
+}
+\mlcodeline{10}{~~~~~~~~~~~~\mlkeyword{fun}~v~(x\mloperator{\mbox{,}}~y)~\mlkeyword{->}~
+}
+\mlcodeline{11}{~~~~~~~~~~~~~~\mlkeywordA{let}~ab~\mlkeyword{=}~alpha\_{}beta~
+}
+\mlcodeline{12}{~~~~~~~~~~~~~~~~(sim\_{}play\_{}cell~board~c~x~y)~
+}
+\mlcodeline{13}{~~~~~~~~~~~~~~~~Black~
+}
+\mlcodeline{14}{~~~~~~~~~~~~~~~~(d~\mloperator{-}~1)~
+}
+\mlcodeline{15}{~~~~~~~~~~~~~~~~\mloperator{\mbox{}\hspace{0pt}{!}\hspace{0pt}}a2~b~\mlkeywordA{in}
+}
+\mlcodeline{16}{~~~~~~~~~~~~~~\mlkeywordA{let}~v2~\mlkeyword{=}~max~v~ab~\mlkeywordA{in}
+}
+\mlcodeline{17}{~~~~~~~~~~~~~~a2~\mloperator{\mbox{\COLON}{}=}~max~v2~\mloperator{\mbox{}\hspace{0pt}{!}\hspace{0pt}}a2\mloperator{\mbox{\SC}}
+}
+\mlcodeline{18}{~~~~~~~~~~~~~~v2
+}
+\mlcodeline{19}{~~~~~~~~~~)	
+}
+\mlcodeline{20}{~~~~~~~~~~(\mlkeyword{fun}~v~\mlkeyword{->}~v~\mloperator{>\mbox{}}~b)~
+}
+\mlcodeline{21}{~~~~~~~~~~\mloperator{(-}((\mlmodulename{Array}\mbox{}\mloperator{.}length~board)~\mloperator{*}~(\mlmodulename{Array}\mbox{}\mloperator{.}length~board\mloperator{.}(0))))
+}
+\mlcodeline{22}{~~~~~~~~~~playable\_{}cells
+}
+\mlcodeline{23}{~~~~\mloperator{|}~\mloperator{\_}~\mlkeyword{->}~\mlkeywordA{let}~b2~\mlkeyword{=}~ref~b~\mlkeywordA{in}
+}
+\mlcodeline{24}{~~~~~~~~fold\_{}until~
+}
+\mlcodeline{25}{~~~~~~~~~~(
+}
+\mlcodeline{26}{~~~~~~~~~~~~\mlkeyword{fun}~v~(x\mloperator{\mbox{,}}~y)~\mlkeyword{->}~
+}
+\mlcodeline{27}{~~~~~~~~~~~~~~\mlkeywordA{let}~ab~\mlkeyword{=}~alpha\_{}beta~
+}
+\mlcodeline{28}{~~~~~~~~~~~~~~~~(sim\_{}play\_{}cell~board~c~x~y)~
+}
+\mlcodeline{29}{~~~~~~~~~~~~~~~~White~
+}
+\mlcodeline{30}{~~~~~~~~~~~~~~~~(d~\mloperator{-}~1)~
+}
+\mlcodeline{31}{~~~~~~~~~~~~~~~~a~\mloperator{\mbox{}\hspace{0pt}{!}\hspace{0pt}}b2~\mlkeywordA{in}
+}
+\mlcodeline{32}{~~~~~~~~~~~~~~\mlkeywordA{let}~v2~\mlkeyword{=}~min~v~ab~\mlkeywordA{in}
+}
+\mlcodeline{33}{~~~~~~~~~~~~~~b2~\mloperator{\mbox{\COLON}{}=}~min~v2~\mloperator{\mbox{}\hspace{0pt}{!}\hspace{0pt}}b2\mloperator{\mbox{\SC}}
+}
+\mlcodeline{34}{~~~~~~~~~~~~~~v2
+}
+\mlcodeline{35}{~~~~~~~~~~)	
+}
+\mlcodeline{36}{~~~~~~~~~~(\mlkeyword{fun}~v~\mlkeyword{->}~v~\mloperator{<\mbox{}}~a)~
+}
+\mlcodeline{37}{~~~~~~~~~~((\mlmodulename{Array}\mbox{}\mloperator{.}length~board)~\mloperator{*}~(\mlmodulename{Array}\mbox{}\mloperator{.}length~board\mloperator{.}(0)))
+}
+\mlcodeline{38}{~~~~~~~~~~~playable\_{}cells
+}
+\mlcodeline{39}{\mloperator{\mbox{\SC}\mbox{\SC}}}
+\end{longtable}
+}
+
+\end{figure}
+
+\subsubsection{Algorithme: Tour de la machine de jouer}
+
+Cette méthode décrit le tour de la machine. À partir de la liste des coûts immédiats, l'algorithme va évaluer chacun d'entre eux grâce à l'algorithme Minimax $\alpha \beta$. Les coup sont alors pondérés et la fonction récursive va retourner le meilleur mouvement à faire. Le programme va alors jouer la case grâces au coordonnées de la position de cette dernière.
+
+\begin{figure}[h]
+\caption{Méthode pour le tour de la machine}
+
+{\scriptsize\noindent\begin{longtable}{r|l}
+\mlcodeline{1}{\mlcomments{(**~Methode{\mbox{\COLON}}~Tour~de~la~machine~intelligente~*)}
+}
+\mlcodeline{2}{\mlkeywordA{let}~ia\_{}turn~board~\mlkeyword{=}~
+}
+\mlcodeline{3}{~~\mlkeywordA{let}~playable\_{}cells~\mlkeyword{=}~playable\_{}cells~board~White~\mlkeywordA{in}~
+}
+\mlcodeline{4}{~~~~\mlkeyword{match}~(\mlmodulename{List}\mbox{}\mloperator{.}length~playable\_{}cells)~\mlkeyword{with}
+}
+\mlcodeline{5}{~~~~\mloperator{|}~0~\mlkeyword{->}~()
+}
+\mlcodeline{6}{~~~~\mloperator{|}~\mloperator{\_}~\mlkeyword{->}~
+}
+\mlcodeline{7}{~~~~~~(\mlkeywordA{let}~x\mloperator{\mbox{,}}~y~\mlkeyword{=}
+}
+\mlcodeline{8}{~~~~~~~~\mlkeywordA{let~rec}~get\_{}best\_{}move~ab~cell~playable\_{}cells~\mlkeyword{=}
+}
+\mlcodeline{9}{~~~~~~~~~~\mlkeyword{match}~playable\_{}cells~\mlkeyword{with}
+}
+\mlcodeline{10}{~~~~~~~~~~\mloperator{|}~(x\mloperator{\mbox{,}}~y)~\mloperator{\mbox{\COLON}\mbox{\COLON}}~q~\mlkeyword{->}~
+}
+\mlcodeline{11}{~~~~~~~~~~~~\mlkeywordA{let}~a~\mlkeyword{=}~\mloperator{-}((\mlmodulename{Array}\mbox{}\mloperator{.}length~board)~\mloperator{*}~(\mlmodulename{Array}\mbox{}\mloperator{.}length~board\mloperator{.}(0)))
+}
+\mlcodeline{12}{~~~~~~~~~~~~\mlkeywordA{and}~b~\mlkeyword{=}~((\mlmodulename{Array}\mbox{}\mloperator{.}length~board)~\mloperator{*}~(\mlmodulename{Array}\mbox{}\mloperator{.}length~board\mloperator{.}(0)))
+}
+\mlcodeline{13}{~~~~~~~~~~~~\mlkeywordA{and}~old\_{}ab~\mlkeyword{=}~ab~\mlkeywordA{in}~
+}
+\mlcodeline{14}{~~~~~~~~~~~~~~\mlkeywordA{let}~ab~\mlkeyword{=}~(
+}
+\mlcodeline{15}{~~~~~~~~~~~~~~alpha\_{}beta~
+}
+\mlcodeline{16}{~~~~~~~~~~~~~~~~(sim\_{}play\_{}cell~board~White~x~y)~
+}
+\mlcodeline{17}{~~~~~~~~~~~~~~~~Black~
+}
+\mlcodeline{18}{~~~~~~~~~~~~~~~~\mloperator{(\mbox{}\hspace{0pt}{!}\hspace{0pt}}depth~\mloperator{-}~1)~
+}
+\mlcodeline{19}{~~~~~~~~~~~~~~~~a~b
+}
+\mlcodeline{20}{~~~~~~~~~~~~~~)~\mlkeywordA{in}
+}
+\mlcodeline{21}{~~~~~~~~~~~~~~~~\mlkeyword{if}~ab~\mloperator{>\mbox{}}~old\_{}ab~\mlkeyword{then}~get\_{}best\_{}move~ab~(x\mloperator{\mbox{,}}~y)~q~
+}
+\mlcodeline{22}{~~~~~~~~~~~~~~~~\mlkeyword{else}~get\_{}best\_{}move~old\_{}ab~cell~q
+}
+\mlcodeline{23}{~~~~~~~~~~\mloperator{|}~\mloperator{[}\mloperator{]}~\mlkeyword{->}~cell
+}
+\mlcodeline{24}{~~~~~~~~\mlkeywordA{in}~get\_{}best\_{}move~
+}
+\mlcodeline{25}{~~~~~~~~~~\mloperator{(-}((\mlmodulename{Array}\mbox{}\mloperator{.}length~board)~\mloperator{*}~(\mlmodulename{Array}\mbox{}\mloperator{.}length~board\mloperator{.}(0))))~
+}
+\mlcodeline{26}{~~~~~~~~~~(\mlmodulename{List}\mbox{}\mloperator{.}hd~playable\_{}cells)~
+}
+\mlcodeline{27}{~~~~~~~~~~(\mlmodulename{List}\mbox{}\mloperator{.}tl~playable\_{}cells)
+}
+\mlcodeline{28}{~~~~~~\mlkeywordA{in}~play\_{}cell~board~White~x~y)
+}
+\mlcodeline{29}{\mloperator{\mbox{\SC}\mbox{\SC}}}
+\end{longtable}
+}
+
+\end{figure}
+
+\newpage
 
 \section{Module {\tt{Othello}} : Documentation}
 \label{module:Othello}\index{Othello@\verb`Othello`}
@@ -1162,7 +1392,7 @@ val playable_dir : cell array array -> cell -> int * int -> int * int -> bool
 \end{ocamldoccode}
 \index{playable-underscoredir@\verb`playable_dir`}
 \begin{ocamldocdescription}
-Methode de test de direction légal $=$$>$ Vrai si la direction est légale
+Methode de test de direction légale $=$$>$ Vrai si la direction est légale
 
 
 \end{ocamldocdescription}
@@ -1391,5 +1621,9 @@ Définition de la function prinicipale
 \end{ocamldocdescription}
 
 
-\end{document}
+\section{Conclusion}
+
+Ce projet nous a permis de mettre en application les enseignements d'Algorithmes et complexité de ce semestre. L'approche du problème avec le langage fonctionnel OCAML a introduit les notions de programmation impérative (même si pas le cas échéant) et de filtrage par motif qui rend facile la manipulation de types algébriques. Ce projet a dissipé toute appréhension à travailler avec ce langage multi-paradigme. Ceci nous a également permis de nous documenter sans limites concernant les intelligences artificielles et assimiler leurs différents concepts.
+
+
 \end{document}

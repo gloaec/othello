@@ -207,7 +207,7 @@ let get_opponent c =
   | _ -> White
 ;;
 
-(** Methode de test de direction légal => Vrai si la direction est légale *)
+(** Methode de test de direction légale => Vrai si la direction est légale *)
 let playable_dir board c (x, y) (dx, dy) =
   let rec playable_dir_rec (x, y) valid = 
     if not (check_pos board x y) then 				(* Test si la position est sur le plateau *)
@@ -274,15 +274,6 @@ let play_cell board c x y =
   board.(x).(y) <- c                                (* Prise de la case cliquée *)
 ;;
 
-let display_taken board x y =
-	(** Construction de la bordure du cercle *)
-    Graphics.set_color (Graphics.rgb 0 255 0);
-    Graphics.draw_circle 
-    (y * !cell_size + !cell_size/2) 
-    (x * !cell_size + !cell_size/2) 
-    (!cell_size / 2 - 2);	
-;;
-
 (** Méthode pour simuler le jeu sur une case *)
 let sim_play_cell board c x y =
   let sim_board = (copy_board board) in				(* Copie de l'état de la board *)
@@ -300,7 +291,6 @@ let sim_play_cell board c x y =
             if (check_pos sim_board x y) then				    (* Test si la position est sur le plateau *)
             if (sim_board.(x).(y) = opponent) then (			(* Test si le jeton est à l'adversaire *)
               sim_board.(x).(y) <- c; 							  (* Prise du jeton *)
-			  display_taken board x y;
               take (x + dx, y + dy)							  (* Tentative de prise du prochain jeton dans la direction donnée *)
             )
           in take (x + dx, y + dy)						  (* Tentative de prise du premier jeton dans la direction donnée *)
@@ -408,51 +398,51 @@ let rec fold_until f p acc l =
 (** Méthode récursive de calcul alphabeta des noeuds de l'arbre *)
 let rec alpha_beta board c d a b =
   if (is_finished board or d = 0) then
-	score board White
+    score board White
   else let playable_cells = playable_cells board c in 
     match c with
     | White -> let a2 = ref a in
-	    fold_until 
-		  (
-		    fun v (x, y) -> 
+        fold_until 
+          (
+            fun v (x, y) -> 
               let v2 = max v (alpha_beta (sim_play_cell board c x y) Black (d - 1) !a2 b) in
-			  	a2 := max v2 !a2;
-			    v2
-		  )	
-		  (fun v -> v > b) 
-		  (-((Array.length board) * (Array.length board.(0))))
-		  playable_cells
+              a2 := max v2 !a2;
+              v2
+          )	
+          (fun v -> v > b) 
+          (-((Array.length board) * (Array.length board.(0))))
+          playable_cells
     | _ -> let b2 = ref b in
-		fold_until 
-		  (
-		    fun v (x, y) -> 
-			  let v2 = min v (alpha_beta (sim_play_cell board c x y) White (d - 1) a !b2) in
-			    b2 := min v2 !b2;
-			    v2
-		  )	
-		  (fun v -> v < a) 
-		  ((Array.length board) * (Array.length board.(0)))
-		  playable_cells
+        fold_until 
+          (
+            fun v (x, y) -> 
+              let v2 = min v (alpha_beta (sim_play_cell board c x y) White (d - 1) a !b2) in
+              b2 := min v2 !b2;
+              v2
+          )	
+          (fun v -> v < a) 
+          ((Array.length board) * (Array.length board.(0)))
+           playable_cells
 ;;
 
 (** Methode: Tour de la machine intelligente *)
 let ia_turn board = 
   let playable_cells = playable_cells board White in 
-	match (List.length playable_cells) with
-	| 0 -> ()
-	| _ -> 
-	  (let x, y =
-	    let rec get_best_move ab cell playable_cells =
-	      match playable_cells with
-	      | (x, y) :: q -> 
-		    let a = -((Array.length board) * (Array.length board.(0)))
-		    and b = ((Array.length board) * (Array.length board.(0)))
-		    and old_ab = ab in 
-		      let ab = (alpha_beta (sim_play_cell board White x y) Black (!depth - 1) a b) in
-		        if ab > old_ab then get_best_move ab (x, y) q 
-		        else get_best_move old_ab cell q
-	      | [] -> cell
-	    in get_best_move (-((Array.length board) * (Array.length board.(0)))) (List.hd playable_cells) (List.tl playable_cells)
+    match (List.length playable_cells) with
+    | 0 -> ()
+    | _ -> 
+      (let x, y =
+        let rec get_best_move ab cell playable_cells =
+          match playable_cells with
+          | (x, y) :: q -> 
+            let a = -((Array.length board) * (Array.length board.(0)))
+            and b = ((Array.length board) * (Array.length board.(0)))
+            and old_ab = ab in 
+              let ab = (alpha_beta (sim_play_cell board White x y) Black (!depth - 1) a b) in
+                if ab > old_ab then get_best_move ab (x, y) q 
+                else get_best_move old_ab cell q
+          | [] -> cell
+        in get_best_move (-((Array.length board) * (Array.length board.(0)))) (List.hd playable_cells) (List.tl playable_cells)
       in play_cell board White x y)
 ;;
 
