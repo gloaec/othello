@@ -1,4 +1,4 @@
-Othello Minimax
+Othello
 =============
 
 Othello game in OCaml (player versus IA using Minimax Alpha-Beta or Random)
@@ -10,15 +10,15 @@ Othello game in OCaml (player versus IA using Minimax Alpha-Beta or Random)
 
 ## Installation
 
-	1 - `$ git clone git://gitorious.org/othello-minimax/othello-minimax.git` Clone the project using git
+1. `$ git clone git://github.com/gloaec/othello.git` Clone the project using git
 
-or download the package : [othello-minimax.tar.gz](https://gitorious.org/othello-minimax/othello-minimax/archive-tarball/master)
+or download the package : [othello-master.zip](https://github.com/gloaec/othello/archive/master.zip)
 
-	1 - `$ tar -zxvf othello-minimax-othello-minimax-master.tar.gz -C othello-minimax` Unzip the archive
+1. `$ unzip othello-master.zip -d othello` Unzip the archive
 	
-	2 - `$ cd othello-minimax/` 
-	3 - `$ make` Build the binaries
-	4 - `./othello` Run the application
+2. `$ cd othello/` 
+3. `$ make` Build the binaries
+4. `./othello` Run the application
 	
 ## Options
 
